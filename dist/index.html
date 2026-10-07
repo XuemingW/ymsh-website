@@ -6,7 +6,7 @@
   <meta name="description" content="逸鸣山海 Lab：两个前腾讯工程师组成的 AI 产品小队，持续做产品、写复盘，也分享我们对 AI 的真实实践。" />
   <meta name="theme-color" content="#f7f4ed" />
   <title>逸鸣山海 Lab｜两个工程师的 AI 产品小队</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%232653ff'/%3E%3Cpath d='M12 43 25 22l8 13 7-10 12 18H12Z' fill='none' stroke='%23fff' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='47' cy='17' r='5' fill='%23ff7447'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230052D9'/%3E%3Cpath d='M12 43 25 22l8 13 7-10 12 18H12Z' fill='none' stroke='%23fff' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='47' cy='17' r='5' fill='%23ff7447'/%3E%3C/svg%3E" />
   <style>
     :root {
       --paper: #f7f4ed;
@@ -14,8 +14,8 @@
       --ink: #171717;
       --muted: #6c6a66;
       --line: #d9d4c8;
-      --blue: #2653ff;
-      --blue-soft: #e8edff;
+      --blue: #0052d9;
+      --blue-soft: #e8f3ff;
       --orange: #ff7447;
       --orange-soft: #ffe6dc;
       --mint: #bdf8df;
@@ -67,6 +67,8 @@
     .desk-photo { aspect-ratio: 1.12; width: 100%; object-fit: cover; border-radius: 28px; border: 2px solid var(--ink); background: linear-gradient(135deg,#e8edff,#ffe6dc); }
     .tape { position: absolute; width: 88px; height: 27px; background: rgba(255,215,95,.82); top: -10px; left: 50%; transform: translateX(-50%) rotate(-3deg); }
     .sticker { position: absolute; right: -18px; bottom: 28px; background: var(--orange); color: white; width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; text-align: center; font-size: 14px; font-weight: 800; line-height: 1.25; transform: rotate(8deg); border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+    .qq-penguin { position: absolute; z-index: 2; left: -42px; bottom: -8px; width: 96px; height: auto; filter: drop-shadow(0 9px 9px rgba(23,23,23,.18)); transform: rotate(-5deg); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+    .desk-frame:hover .qq-penguin { transform: translateY(-8px) rotate(2deg); }
 
     .focus-bar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.55); }
     .focus-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
@@ -87,7 +89,7 @@
     .about .section-intro { color: rgba(255,255,255,.58); }
     .people { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .person { min-height: 410px; padding: 34px; border: 1px solid rgba(255,255,255,.17); border-radius: 24px; display: grid; grid-template-columns: 1fr .88fr; gap: 28px; align-items: end; position: relative; overflow: hidden; background: #222; }
-    .person:nth-child(2) { background: #182a5c; }
+    .person:nth-child(2) { background: var(--blue); }
     .portrait-placeholder { align-self: stretch; border-radius: 18px; border: 1px dashed rgba(255,255,255,.35); display: grid; place-items: center; color: rgba(255,255,255,.45); font-size: 13px; text-align: center; background: rgba(255,255,255,.04); }
     .person-role { color: var(--yellow); font-size: 12px; letter-spacing: .13em; font-weight: 800; }
     .person h3 { font-size: 29px; margin: 12px 0 14px; letter-spacing: -.04em; }
@@ -131,7 +133,7 @@
     .services .section-intro { color: rgba(255,255,255,.56); }
     .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .service-card { min-height: 280px; border: 1px solid rgba(255,255,255,.18); background: #222; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; }
-    .service-card:first-child { background: #263a8e; }
+    .service-card:first-child { background: var(--blue); }
     .service-no { color: var(--orange); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
     .service-card h3 { font-size: 23px; margin: 30px 0 9px; }
     .service-card p { color: rgba(255,255,255,.53); margin: 0; font-size: 14px; }
@@ -174,13 +176,13 @@
       color: white; background: #171717; font-size: 13px; opacity: 0; pointer-events: none; transition: .25s ease;
     }
     .edit-status.show { opacity: 1; transform: translate(-50%, 0); }
-    .editor-active [contenteditable="true"] { outline: 2px dashed rgba(38,83,255,.6); outline-offset: 5px; border-radius: 3px; cursor: text; }
+    .editor-active [contenteditable="true"] { outline: 2px dashed rgba(0,82,217,.6); outline-offset: 5px; border-radius: 3px; cursor: text; }
     .editor-active [contenteditable="true"]:focus { outline-style: solid; background: rgba(255,255,255,.45); }
     .about.editor-active [contenteditable="true"], .services.editor-active [contenteditable="true"] { background: rgba(255,255,255,.06); }
     @media print { .edit-ui { display: none !important; } }
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } .qq-penguin { transition: none; } }
 
     @media (max-width: 900px) {
       .hero-grid, .section-head, .contact-card { grid-template-columns: 1fr; }
@@ -203,6 +205,7 @@
       .lead { font-size: 16px; }
       .button { width: 100%; }
       .sticker { width: 86px; height: 86px; right: -5px; font-size: 12px; }
+      .qq-penguin { left: -8px; bottom: -12px; width: 76px; }
       .focus-inner { min-height: 76px; display: block; padding-top: 13px; padding-bottom: 13px; overflow: hidden; }
       .focus-label { margin-bottom: 9px; }
       .focus-topics { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding: 0 2px 3px; scrollbar-width: none; }
@@ -261,6 +264,7 @@
         <div class="desk-frame">
           <span class="tape" aria-hidden="true"></span>
           <img class="desk-photo" src="assets/studio-workbench-v4.png" alt="窗外可见带有 Tencent 腾讯标识的总部大厦，桌面与电脑展示着 AI 产品设计、模型评估、虚拟试衣和旅行规划元素" />
+          <img class="qq-penguin" src="assets/qq-penguin-sticker.png" alt="戴红围巾的 QQ 企鹅彩蛋" />
           <span class="sticker">用 AI 看见<br>更多可能</span>
         </div>
       </div>
