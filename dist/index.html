@@ -68,10 +68,13 @@
     .tape { position: absolute; width: 88px; height: 27px; background: rgba(255,215,95,.82); top: -10px; left: 50%; transform: translateX(-50%) rotate(-3deg); }
     .sticker { position: absolute; right: -18px; bottom: 28px; background: var(--orange); color: white; width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; text-align: center; font-size: 14px; font-weight: 800; line-height: 1.25; transform: rotate(8deg); border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
 
-    .ticker { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); overflow: hidden; background: var(--yellow); }
-    .ticker-track { min-width: max-content; display: flex; gap: 45px; padding: 11px 0; font-size: 13px; font-weight: 800; letter-spacing: .05em; animation: ticker 28s linear infinite; }
-    .ticker-track span::before { content: "✦"; margin-right: 45px; color: var(--blue); }
-    @keyframes ticker { to { transform: translateX(-50%); } }
+    .focus-bar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.55); }
+    .focus-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+    .focus-label { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 12px; color: var(--ink); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+    .focus-label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 5px var(--blue-soft); }
+    .focus-topics { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 28px; color: var(--muted); font-size: 13px; }
+    .focus-topic { position: relative; white-space: nowrap; }
+    .focus-topic:not(:first-child)::before { content: ""; position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #b5afa2; left: -16px; top: 50%; transform: translateY(-50%); }
 
     section { padding: 108px 0; }
     .section-head { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; align-items: end; margin-bottom: 48px; }
@@ -177,7 +180,7 @@
     @media print { .edit-ui { display: none !important; } }
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ticker-track { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }
 
     @media (max-width: 900px) {
       .hero-grid, .section-head, .contact-card { grid-template-columns: 1fr; }
@@ -200,6 +203,10 @@
       .lead { font-size: 16px; }
       .button { width: 100%; }
       .sticker { width: 86px; height: 86px; right: -5px; font-size: 12px; }
+      .focus-inner { min-height: 76px; display: block; padding-top: 13px; padding-bottom: 13px; overflow: hidden; }
+      .focus-label { margin-bottom: 9px; }
+      .focus-topics { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding: 0 2px 3px; scrollbar-width: none; }
+      .focus-topics::-webkit-scrollbar { display: none; }
       section { padding: 82px 0; }
       .person { grid-template-columns: 1fr; }
       .portrait-placeholder { min-height: 220px; grid-row: 1; }
@@ -259,7 +266,14 @@
       </div>
     </section>
 
-    <div class="ticker" aria-hidden="true"><div class="ticker-track"><span>AI 产品</span><span>公开构建</span><span>模型实测</span><span>小程序</span><span>虚拟试衣</span><span>旅行灵感</span><span>AI 产品</span><span>公开构建</span><span>模型实测</span><span>小程序</span><span>虚拟试衣</span><span>旅行灵感</span></div></div>
+    <div class="focus-bar">
+      <div class="shell focus-inner">
+        <span class="focus-label">最近在做</span>
+        <div class="focus-topics" aria-label="近期关注方向">
+          <span class="focus-topic">AI 产品</span><span class="focus-topic">公开构建</span><span class="focus-topic">模型实测</span><span class="focus-topic">小程序</span><span class="focus-topic">虚拟试衣</span><span class="focus-topic">旅行灵感</span>
+        </div>
+      </div>
+    </div>
 
     <section id="about" class="about">
       <div class="shell">
@@ -316,7 +330,7 @@
     </section>
   </main>
 
-  <footer><div class="shell footer-row"><b>逸鸣山海 Lab</b><span>两个工程师的 AI 产品小队 · © 2026 逸鸣山海文化科技有限公司</span><span>备案信息待补充</span></div></footer>
+  <footer><div class="shell footer-row"><b>逸鸣山海 Lab</b><span>© 2026 逸鸣山海文化科技有限公司</span><span>备案信息待补充</span></div></footer>
 
   <script>
     const menuButton = document.querySelector('.menu');
@@ -350,7 +364,13 @@
     let editSnapshot = null;
 
     function readSavedContent() {
-      try { return JSON.parse(localStorage.getItem(EDIT_STORAGE_KEY) || '{}'); }
+      try {
+        const saved = JSON.parse(localStorage.getItem(EDIT_STORAGE_KEY) || '{}');
+        Object.keys(saved).forEach(key => {
+          if (saved[key] === '两个工程师的 AI 产品小队 · © 2026 逸鸣山海文化科技有限公司') saved[key] = '© 2026 逸鸣山海文化科技有限公司';
+        });
+        return saved;
+      }
       catch { return {}; }
     }
     function applyContent(content) {
