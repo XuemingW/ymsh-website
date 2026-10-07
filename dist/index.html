@@ -70,13 +70,18 @@
     .qq-penguin { position: absolute; z-index: 2; left: -42px; bottom: -8px; width: 96px; height: auto; filter: drop-shadow(0 9px 9px rgba(23,23,23,.18)); transform: rotate(-5deg); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
     .desk-frame:hover .qq-penguin { transform: translateY(-8px) rotate(2deg); }
 
-    .focus-bar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.55); }
+    .focus-bar { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.55); }
     .focus-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
     .focus-label { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 12px; color: var(--ink); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
     .focus-label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 5px var(--blue-soft); }
-    .focus-topics { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 28px; color: var(--muted); font-size: 13px; }
-    .focus-topic { position: relative; white-space: nowrap; }
+    .focus-topics { position: relative; isolation: isolate; min-height: 48px; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 28px; color: var(--muted); font-size: 13px; }
+    .focus-topic { position: relative; z-index: 2; white-space: nowrap; }
     .focus-topic:not(:first-child)::before { content: ""; position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #b5afa2; left: -16px; top: 50%; transform: translateY(-50%); }
+    .focus-runner { position: absolute; z-index: 1; left: -58px; top: 50%; width: 50px; pointer-events: none; animation: penguin-cross 12s linear infinite; }
+    .focus-runner img { width: 100%; height: auto; filter: drop-shadow(0 4px 4px rgba(23,23,23,.16)); animation: penguin-hop .36s ease-in-out infinite alternate; }
+    .focus-bar:hover .focus-runner, .focus-bar:hover .focus-runner img { animation-play-state: paused; }
+    @keyframes penguin-cross { from { left: -58px; } to { left: calc(100% + 8px); } }
+    @keyframes penguin-hop { from { transform: translateY(-45%) rotate(-4deg); } to { transform: translateY(-58%) rotate(4deg); } }
 
     section { padding: 108px 0; }
     .section-head { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; align-items: end; margin-bottom: 48px; }
@@ -182,7 +187,7 @@
     @media print { .edit-ui { display: none !important; } }
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } .qq-penguin { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } .qq-penguin { transition: none; } .focus-runner { display: none; } }
 
     @media (max-width: 900px) {
       .hero-grid, .section-head, .contact-card { grid-template-columns: 1fr; }
@@ -209,6 +214,7 @@
       .focus-inner { min-height: 76px; display: block; padding-top: 13px; padding-bottom: 13px; overflow: hidden; }
       .focus-label { margin-bottom: 9px; }
       .focus-topics { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding: 0 2px 3px; scrollbar-width: none; }
+      .focus-runner { width: 44px; }
       .focus-topics::-webkit-scrollbar { display: none; }
       section { padding: 82px 0; }
       .person { grid-template-columns: 1fr; }
@@ -275,6 +281,7 @@
         <span class="focus-label">最近在做</span>
         <div class="focus-topics" aria-label="近期关注方向">
           <span class="focus-topic">AI 产品</span><span class="focus-topic">公开构建</span><span class="focus-topic">模型实测</span><span class="focus-topic">小程序</span><span class="focus-topic">虚拟试衣</span><span class="focus-topic">旅行灵感</span>
+          <span class="focus-runner" aria-hidden="true"><img src="assets/qq-penguin-running.png" alt="" /></span>
         </div>
       </div>
     </div>
