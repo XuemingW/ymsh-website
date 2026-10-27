@@ -1,0 +1,2960 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="assets/ymsh-logo-blue.png?v=20261020">
+  <title>Qoder 绿皮书｜从 AI IDE 到软件生产控制面</title>
+  <meta name="description" content="Qoder 绿皮书：技术底盘、工程知识治理、产品战略、竞争格局、商业模式与企业安全采购的完整拆解。">
+  <style>
+
+    :root {
+      --green-950: #0b2f24;
+      --green-900: #103d2d;
+      --green-800: #18543d;
+      --green-700: #267056;
+      --green-500: #4e8d6f;
+      --green-200: #c9dfd2;
+      --green-100: #e8f1eb;
+      --green-50: #f2f7f3;
+      --paper: #f7f4ea;
+      --paper-deep: #eee9da;
+      --ink: #1d3027;
+      --muted: #607269;
+      --line: rgba(16, 61, 45, .15);
+      --gold: #b08a4b;
+      --white: #fffefa;
+      --shadow: 0 18px 50px rgba(11, 47, 36, .10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(16, 61, 45, .025) 1px, transparent 1px),
+        var(--paper);
+      background-size: 100% 28px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    a { color: inherit; }
+
+    .page-shell {
+      width: min(1220px, calc(100% - 40px));
+      margin: 28px auto 72px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 24px;
+      padding: 26px 22px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      color: #edf6f0;
+      background: var(--green-950);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .toc-kicker {
+      margin: 0 0 8px;
+      color: #adcfbb;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+    }
+
+    .toc h2 {
+      margin: 0 0 18px;
+      color: #fff;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .toc ol,
+    .toc ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      color: #cfe1d6;
+      text-decoration: none;
+      line-height: 1.45;
+    }
+
+    .toc a:hover { color: #fff; }
+
+    .toc-tree > li {
+      padding: 7px 0 9px;
+      border-bottom: 1px solid rgba(255, 255, 255, .09);
+    }
+
+    .toc .chapter-link {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 7px;
+      padding: 4px;
+      color: #edf6f0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .toc .chapter-link::before {
+      content: attr(data-chapter);
+      color: #91bda0;
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      padding-top: 2px;
+    }
+
+    .toc-sublist {
+      margin: 5px 0 0 36px !important;
+      padding-left: 11px !important;
+      border-left: 1px solid rgba(145, 189, 160, .24);
+    }
+
+    .toc-sublist a {
+      position: relative;
+      padding: 4px 5px 4px 10px;
+      color: #8fb09d;
+      font-size: 11px;
+      border-radius: 6px;
+    }
+
+    .toc-sublist a::before {
+      content: "";
+      position: absolute;
+      left: -14px;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      background: #537b65;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .toc a.is-active {
+      color: #fff;
+      background: rgba(142, 194, 160, .14);
+    }
+
+    .toc-sublist a.is-active::before { background: #b8d8c4; box-shadow: 0 0 0 3px rgba(184, 216, 196, .12); }
+
+    .toc-current {
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      color: #d7eadf;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 10px;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .toc-current b {
+      display: block;
+      margin-bottom: 2px;
+      color: #82b596;
+      font-size: 9px;
+      letter-spacing: .12em;
+    }
+
+    .toc-note {
+      margin: 20px 0 0;
+      padding-top: 15px;
+      color: #97b8a5;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .toc-divider {
+      height: 1px;
+      margin: 14px 0;
+      background: rgba(255, 255, 255, .12);
+    }
+
+    .book {
+      overflow: hidden;
+      background: rgba(255, 254, 250, .96);
+      border: 1px solid rgba(16, 61, 45, .08);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .cover {
+      position: relative;
+      min-height: 600px;
+      padding: 76px 74px 58px;
+      overflow: hidden;
+      color: #fff;
+      background:
+        radial-gradient(circle at 76% 24%, rgba(126, 177, 148, .34), transparent 32%),
+        linear-gradient(145deg, #0a2c21 0%, #124734 62%, #1e664b 100%);
+    }
+
+    .cover::before,
+    .cover::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 50%;
+    }
+
+    .cover::before {
+      width: 460px;
+      height: 460px;
+      right: -175px;
+      top: -110px;
+    }
+
+    .cover::after {
+      width: 260px;
+      height: 260px;
+      right: -65px;
+      top: -10px;
+    }
+
+    .edition {
+      display: flex;
+      width: max-content;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 13px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      color: #cae2d3;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    .edition::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: #9cc9ad;
+      border-radius: 50%;
+    }
+
+    .cover h1 {
+      max-width: 680px;
+      margin: 72px 0 18px;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: clamp(52px, 7vw, 86px);
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1.03;
+    }
+
+    .cover h1 span {
+      display: block;
+      margin-top: 18px;
+      color: #b7d8c3;
+      font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: .12em;
+    }
+
+    .cover-lead {
+      max-width: 570px;
+      margin: 0;
+      color: #d5e6dc;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .cover-bottom {
+      position: absolute;
+      left: 74px;
+      right: 74px;
+      bottom: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, .18);
+      color: #a9c7b6;
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+
+    .cover-mark {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      color: var(--green-950);
+      background: #d9eadf;
+      border-radius: 50%;
+      font-family: Georgia, serif;
+      font-size: 28px;
+      font-style: italic;
+    }
+
+    .content { padding: 0 74px 80px; }
+
+    .reading-map {
+      position: relative;
+      margin: -1px -74px 72px;
+      padding: 38px 74px 40px;
+      background: var(--green-100);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .reading-map h2 {
+      margin: 0 0 18px;
+      color: var(--green-900);
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 24px;
+    }
+
+    .reading-map .chapter-map-kicker {
+      display: inline-flex;
+      margin: 0 0 10px;
+      padding: 5px 10px;
+      color: #fff;
+      background: var(--green-800);
+      border-radius: 999px;
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .11em;
+    }
+
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .goal {
+      padding: 18px 18px 17px;
+      background: rgba(255, 255, 255, .65);
+      border: 1px solid rgba(16, 61, 45, .10);
+      border-radius: 15px;
+    }
+
+    .goal strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--green-800);
+      font-size: 14px;
+    }
+
+    .goal span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    section {
+      margin: 0 0 86px;
+      scroll-margin-top: 28px;
+    }
+
+    .section-no {
+      display: inline-flex;
+      position: relative;
+      z-index: 2;
+      margin: 0 0 -13px 22px;
+      padding: 7px 12px;
+      color: #fff;
+      background: var(--green-800);
+      border: 3px solid #fffef9;
+      border-radius: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h2.section-title {
+      margin: 0 0 28px;
+      padding: 31px 24px 21px;
+      color: var(--green-950);
+      background: #fff;
+      border: 1px solid rgba(16, 61, 45, .13);
+      border-top: 6px solid var(--green-700);
+      border-radius: 15px;
+      box-shadow: 0 12px 28px rgba(12, 54, 39, .08);
+      font-family: "Songti SC", "STSong", serif;
+      font-size: clamp(30px, 4vw, 42px);
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 32px 0 12px;
+      color: var(--green-800);
+      font-size: 20px;
+      line-height: 1.45;
+    }
+
+    p { margin: 0 0 16px; }
+
+    .lead {
+      margin-bottom: 28px;
+      color: #395348;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 19px;
+      line-height: 1.9;
+    }
+
+    .highlight {
+      margin: 28px 0;
+      padding: 22px 24px;
+      background: var(--green-50);
+      border-left: 4px solid var(--green-700);
+      border-radius: 0 15px 15px 0;
+    }
+
+    .highlight strong {
+      color: var(--green-800);
+    }
+
+    .plain-list {
+      margin: 18px 0 26px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .plain-list li {
+      position: relative;
+      margin: 10px 0;
+      padding-left: 27px;
+    }
+
+    .plain-list li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: .78em;
+      width: 9px;
+      height: 9px;
+      background: var(--green-500);
+      border: 3px solid var(--green-100);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .scenario-grid,
+    .platform-grid,
+    .mode-grid,
+    .result-grid,
+    .mistake-grid {
+      display: grid;
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .scenario-grid { grid-template-columns: repeat(2, 1fr); }
+    .platform-grid { grid-template-columns: repeat(2, 1fr); }
+    .mode-grid { grid-template-columns: repeat(3, 1fr); }
+    .result-grid { grid-template-columns: repeat(2, 1fr); }
+    .mistake-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      position: relative;
+      padding: 24px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      right: -28px;
+      top: -28px;
+      background: var(--green-100);
+      border-radius: 50%;
+    }
+
+    .card .icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 15px;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 12px;
+      font-family: Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .mini-label {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 9px;
+      color: var(--green-800);
+      background: var(--green-100);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 28px 0;
+    }
+
+    .workflow-step {
+      position: relative;
+      padding: 20px 16px;
+      color: #e9f3ed;
+      background: var(--green-900);
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .workflow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      color: var(--green-900);
+      background: var(--paper);
+      border-radius: 50%;
+      transform: translateY(-50%);
+      font-weight: 700;
+    }
+
+    .workflow-step b {
+      display: block;
+      margin-bottom: 5px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .workflow-step span { font-size: 12px; }
+
+    .steps {
+      margin: 24px 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .steps li {
+      position: relative;
+      min-height: 54px;
+      margin-bottom: 18px;
+      padding: 4px 0 0 70px;
+      counter-increment: step;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 50%;
+      font-family: Georgia, serif;
+      font-size: 19px;
+    }
+
+    .steps b {
+      display: block;
+      color: var(--green-900);
+      font-size: 16px;
+    }
+
+    .steps span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .system-tip {
+      margin-top: 20px;
+      padding: 15px 18px;
+      color: #5c513e;
+      background: #f5efe1;
+      border: 1px solid rgba(176, 138, 75, .25);
+      border-radius: 13px;
+      font-size: 13px;
+    }
+
+    .product-shot {
+      margin: 30px 0 34px;
+    }
+
+    .product-shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #fff;
+      border: 1px solid rgba(16, 61, 45, .13);
+      border-radius: 18px;
+      box-shadow: 0 18px 42px rgba(16, 61, 45, .12);
+    }
+
+    .product-shot > a {
+      display: block;
+      border-radius: 18px;
+      cursor: zoom-in;
+    }
+
+    .product-shot > a:focus-visible {
+      outline: 3px solid var(--green-500);
+      outline-offset: 4px;
+    }
+
+    .product-shot.compact img {
+      width: min(520px, 100%);
+      margin-inline: auto;
+    }
+
+    .product-shot figcaption {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .product-shot figcaption::before {
+      content: "图";
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .shot-pair {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 34px;
+      margin: 34px 0 52px;
+    }
+
+    .shot-pair .product-shot { margin: 0; }
+
+    .shot-pair .product-shot img {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      object-fit: contain;
+    }
+
+    .shot-pair .product-shot figcaption { min-height: 0; }
+
+    .shot-pair + h3 { margin-top: 0; }
+
+    .app-map {
+      margin: 34px 0;
+      padding: 14px;
+      background: #dce7e0;
+      border: 1px solid #c4d5ca;
+      border-radius: 22px;
+      box-shadow: 0 16px 30px rgba(16, 61, 45, .11);
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      height: 30px;
+      padding: 0 5px 10px;
+    }
+
+    .window-bar i {
+      width: 9px;
+      height: 9px;
+      background: #9ab0a2;
+      border-radius: 50%;
+    }
+
+    .window-body {
+      display: grid;
+      grid-template-columns: 23% 48% 29%;
+      min-height: 330px;
+      overflow: hidden;
+      background: #fff;
+      border-radius: 13px;
+    }
+
+    .ui-panel { padding: 18px; }
+
+    .ui-panel + .ui-panel { border-left: 1px solid #e4ebe6; }
+
+    .ui-left { background: #f5f8f6; }
+
+    .ui-title {
+      margin-bottom: 14px;
+      color: var(--green-900);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .ui-row {
+      height: 30px;
+      margin-bottom: 8px;
+      padding: 7px 8px;
+      color: #718178;
+      background: #fff;
+      border-radius: 7px;
+      font-size: 9px;
+    }
+
+    .ui-row.active {
+      color: var(--green-900);
+      background: var(--green-100);
+      font-weight: 700;
+    }
+
+    .chat-bubble {
+      width: 82%;
+      margin: 10px 0;
+      padding: 11px 13px;
+      color: #54665d;
+      background: #f2f5f3;
+      border-radius: 11px 11px 11px 3px;
+      font-size: 9px;
+      line-height: 1.55;
+    }
+
+    .chat-bubble.user {
+      margin-left: auto;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 11px 11px 3px 11px;
+    }
+
+    .composer {
+      margin-top: 22px;
+      padding: 12px;
+      color: #95a39b;
+      border: 1px solid #dce5df;
+      border-radius: 10px;
+      font-size: 9px;
+    }
+
+    .artifact {
+      margin-bottom: 11px;
+      padding: 12px;
+      background: #f7faf8;
+      border: 1px solid #e0e9e3;
+      border-radius: 10px;
+    }
+
+    .artifact b {
+      display: block;
+      color: var(--green-800);
+      font-size: 10px;
+    }
+
+    .artifact span {
+      color: #85938b;
+      font-size: 8px;
+    }
+
+    .app-legend {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .app-legend div {
+      padding: 10px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .72);
+      border-radius: 10px;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .app-legend b {
+      color: var(--green-800);
+    }
+
+    .mode-card {
+      padding: 25px 21px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .mode-card:nth-child(1) { background: #f7faf8; }
+    .mode-card:nth-child(2) { background: #edf5f0; }
+    .mode-card:nth-child(3) { color: #e6f1ea; background: var(--green-900); }
+
+    .mode-card .mode-name {
+      margin: 0 0 8px;
+      color: var(--green-800);
+      font-family: Georgia, serif;
+      font-size: 29px;
+      line-height: 1;
+    }
+
+    .mode-card:nth-child(3) .mode-name { color: #fff; }
+
+    .mode-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .mode-card:nth-child(3) p { color: #bfd4c7; }
+
+    .mode-card ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+    }
+
+    .decision {
+      margin: 28px 0;
+      padding: 25px;
+      background: var(--green-50);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .decision-line {
+      display: grid;
+      grid-template-columns: 1fr 94px;
+      gap: 18px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 14px;
+    }
+
+    .decision-line:last-child { border-bottom: 0; }
+
+    .decision-line strong {
+      padding: 7px 11px;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 999px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .folder-tree {
+      margin: 26px 0;
+      padding: 24px 26px;
+      color: #d8e7dd;
+      background: var(--green-950);
+      border-radius: 18px;
+      font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    .folder-tree .folder { color: #9bc5aa; }
+    .folder-tree .file { color: #f0e4c8; }
+    .folder-tree .comment { color: #789889; }
+
+    .prompt-box {
+      margin: 28px 0;
+      overflow: hidden;
+      border: 1px solid rgba(16, 61, 45, .18);
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(16, 61, 45, .08);
+    }
+
+    .prompt-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 18px;
+      color: #dbeadf;
+      background: var(--green-900);
+      font-size: 12px;
+    }
+
+    .prompt-body {
+      padding: 25px 26px;
+      background: #fbfcfa;
+      font-size: 14px;
+      line-height: 1.9;
+      white-space: pre-line;
+    }
+
+    .formula {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 28px 0;
+    }
+
+    .formula div {
+      position: relative;
+      padding: 15px 9px;
+      color: var(--green-800);
+      background: var(--green-100);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .formula div:not(:last-child)::after {
+      content: "+";
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      z-index: 2;
+      color: var(--gold);
+      transform: translateY(-50%);
+    }
+
+    .checklist {
+      margin: 24px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      position: relative;
+      margin: 11px 0;
+      padding: 12px 16px 12px 48px;
+      background: #f8faf8;
+      border: 1px solid #e3ebe6;
+      border-radius: 11px;
+      font-size: 14px;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 16px;
+      top: 11px;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      color: #fff;
+      background: var(--green-700);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mistake {
+      padding: 21px 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .mistake b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--green-900);
+    }
+
+    .mistake p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .chapter-end {
+      margin: 8px -74px 82px;
+      padding: 58px 74px 60px;
+      color: #d4e5da;
+      background: var(--green-950);
+    }
+
+    .chapter-end.book-finish { margin-bottom: -80px; }
+
+    .book-finish .finish-kicker { margin: 0 0 12px; color: #a9cdb8; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+
+    .book-finish h2 { max-width: 650px; margin: 0 0 16px; font-size: clamp(34px, 5vw, 48px); line-height: 1.25; }
+
+    .book-finish p { max-width: 650px; margin: 0; color: #cce0d3; font-size: 15px; line-height: 1.65; }
+
+    .chapter-page {
+      margin-bottom: 100px;
+      padding-top: 34px;
+      scroll-margin-top: 26px;
+    }
+
+    .chapter-opener {
+      position: relative;
+      margin: 0 0 46px;
+      padding: 52px 46px 46px;
+      overflow: hidden;
+      color: #edf6f0;
+      background: linear-gradient(135deg, var(--green-950), var(--green-700));
+      border-left: 9px solid var(--gold);
+      border-radius: 8px 26px 26px 8px;
+      box-shadow: 0 22px 44px rgba(10, 44, 33, .20);
+    }
+
+    .chapter-opener::before {
+      content: "";
+      position: absolute;
+      left: 38px;
+      bottom: 0;
+      width: 92px;
+      height: 5px;
+      background: #c7a765;
+    }
+
+    .chapter-opener::after {
+      content: attr(data-number);
+      position: absolute;
+      right: 20px;
+      top: -38px;
+      color: rgba(255, 255, 255, .07);
+      font-family: Georgia, serif;
+      font-size: 170px;
+      line-height: 1;
+    }
+
+    .chapter-opener .chapter-kicker {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 12px;
+      color: #a9cdb8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    .chapter-opener h2 {
+      position: relative;
+      z-index: 1;
+      max-width: 650px;
+      margin: 0 0 14px;
+      color: #fff;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: clamp(34px, 5vw, 48px);
+      line-height: 1.25;
+    }
+
+    .chapter-opener p {
+      position: relative;
+      z-index: 1;
+      max-width: 650px;
+      margin: 0;
+      color: #cce0d3;
+      font-size: 15px;
+    }
+
+    .subsection {
+      margin: 52px 0 64px;
+      scroll-margin-top: 28px;
+    }
+
+    .subsection h3 {
+      position: relative;
+      margin: 0 0 26px;
+      padding: 27px 24px 21px;
+      color: var(--green-900);
+      background: #fff;
+      border: 1px solid rgba(16, 61, 45, .13);
+      border-top: 6px solid var(--green-700);
+      border-radius: 15px;
+      box-shadow: 0 12px 28px rgba(12, 54, 39, .08);
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 28px;
+      line-height: 1.35;
+    }
+
+    .subsection h3::before {
+      content: attr(data-section);
+      display: flex;
+      width: max-content;
+      margin: -45px 0 13px;
+      padding: 7px 11px;
+      color: #fff;
+      background: var(--green-800);
+      border: 3px solid #fffef9;
+      border-radius: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+
+    .brief-grid,
+    .route-grid,
+    .scenario-board,
+    .safety-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .brief-item {
+      padding: 20px;
+      background: var(--green-50);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .brief-item b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--green-800);
+    }
+
+    .brief-item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .table-wrap {
+      margin: 26px 0 34px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .guide-table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .guide-table th,
+    .guide-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e7ede9;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .guide-table th {
+      color: #fff;
+      background: var(--green-800);
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+
+    .guide-table tr:last-child td { border-bottom: 0; }
+    .guide-table td:first-child { color: var(--green-800); font-weight: 700; }
+
+    .chain {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 28px 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .chain span {
+      flex: 1 0 100px;
+      display: grid;
+      place-content: center;
+      min-height: 66px;
+      padding: 14px 10px;
+      color: #fff;
+      background: var(--green-800);
+      border-radius: 13px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .chain i {
+      flex: 0 0 24px;
+      display: grid;
+      place-content: center;
+      color: var(--gold);
+      font-size: 18px;
+      font-style: normal;
+    }
+
+    .chain small { display: block; margin-top: 4px; color: #bad2c2; font-size: 10px; }
+
+    .template-card {
+      margin: 26px 0;
+      padding: 24px 26px;
+      color: #dcebe1;
+      background: var(--green-950);
+      border-radius: 17px;
+      font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      white-space: pre-line;
+    }
+
+    .template-card b { color: #a8d0b7; }
+
+    .note-strip {
+      margin: 26px 0;
+      padding: 19px 21px;
+      color: #594d39;
+      background: #f5efe1;
+      border: 1px solid rgba(176, 138, 75, .25);
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .scenario-card {
+      padding: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .scenario-card small {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--green-500);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .scenario-card b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--green-900);
+      font-size: 16px;
+    }
+
+    .scenario-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .evidence-map {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 28px 0;
+    }
+
+    .evidence-map div {
+      padding: 18px 10px;
+      background: var(--green-50);
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      text-align: center;
+    }
+
+    .evidence-map b {
+      display: block;
+      color: var(--green-800);
+      font-size: 13px;
+    }
+
+    .evidence-map span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .chapter-end h2 {
+      margin: 0 0 12px;
+      color: #fff;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 34px;
+    }
+
+    .chapter-end p { max-width: 680px; }
+
+    .end-checks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .end-checks div {
+      padding: 16px;
+      color: #e3eee7;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .10);
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .end-checks b {
+      display: block;
+      margin-bottom: 3px;
+      color: #91bea1;
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    @media (max-width: 900px) {
+      .page-shell {
+        width: min(100% - 20px, 780px);
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; max-height: min(70vh, 620px); }
+      .toc-tree { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 14px; }
+      .cover { min-height: 560px; padding: 58px 42px 46px; }
+      .cover-bottom { left: 42px; right: 42px; }
+      .content { padding: 0 42px 64px; }
+      .reading-map { margin-left: -42px; margin-right: -42px; padding-left: 42px; padding-right: 42px; }
+      .chapter-end { margin-left: -42px; margin-right: -42px; margin-bottom: -64px; padding-left: 42px; padding-right: 42px; }
+      .chapter-end { margin-bottom: 72px; }
+      .chapter-end.book-finish { margin-bottom: -64px; }
+      .mode-grid { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: repeat(2, 1fr); }
+      .workflow-step:nth-child(2)::after { display: none; }
+      .shot-pair { grid-template-columns: 1fr; }
+      .chain, .evidence-map { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 620px) {
+      .page-shell { margin-top: 10px; }
+      .book, .toc { border-radius: 18px; }
+      .toc-tree { grid-template-columns: 1fr; }
+      .cover { min-height: 620px; padding: 44px 25px; }
+      .cover h1 { margin-top: 56px; }
+      .cover h1 span { font-size: 17px; }
+      .cover-bottom { left: 25px; right: 25px; bottom: 34px; }
+      .content { padding: 0 24px 56px; }
+      .reading-map { margin: 0 -24px 58px; padding: 30px 24px; }
+      .goal-grid, .scenario-grid, .platform-grid, .result-grid, .mistake-grid, .end-checks { grid-template-columns: 1fr; }
+      .brief-grid, .route-grid, .scenario-board, .safety-grid { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: 1fr; }
+      .workflow-step::after { display: none !important; }
+      .window-body { grid-template-columns: 1fr; }
+      .ui-panel + .ui-panel { border-left: 0; border-top: 1px solid #e4ebe6; }
+      .app-legend { grid-template-columns: 1fr; }
+      .formula { grid-template-columns: 1fr; }
+      .formula div::after { display: none; }
+      .chapter-end { margin: 0 -24px 62px; padding: 44px 24px; }
+      .chapter-end.book-finish { margin-bottom: -56px; }
+      .chapter-opener { padding: 38px 25px 34px; }
+      .chain, .evidence-map { grid-template-columns: 1fr; }
+      .chain div::after { display: none; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { background: #fff; font-size: 10.5pt; }
+      .page-shell { width: 100%; margin: 0; display: block; }
+      .toc { display: none; }
+      .book { border: 0; border-radius: 0; box-shadow: none; }
+      .cover { min-height: 255mm; break-after: page; }
+      .content { padding: 0; }
+      .reading-map { margin: 0 0 18mm; padding: 12mm; }
+      section { margin-bottom: 18mm; }
+      .card, .mode-card, .prompt-box, .app-map, .highlight { break-inside: avoid; }
+      .product-shot { break-inside: avoid; }
+      .chapter-end { margin: 0; padding: 14mm; }
+    }
+  
+    /* Qoder 绿皮书补充样式 */
+    .content h4 { margin: 30px 0 10px; color: var(--green-800); font-size: 18px; font-weight: 700; line-height: 1.5; }
+    .content h5 { margin: 22px 0 8px; color: var(--green-700); font-size: 15.5px; font-weight: 700; }
+    .content p { margin: 0 0 16px; }
+    .content .lead { margin-bottom: 26px; }
+    .content ul.plain-list, .content ol.plain-list { padding-left: 24px; }
+    .content ul.plain-list li, .content ol.plain-list li { margin: 8px 0; line-height: 1.8; }
+    .content code { background: var(--green-100); padding: 1px 6px; border-radius: 5px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: var(--green-900); }
+    .content .product-shot img { width: 100%; height: auto; border-radius: 14px; border: 1px solid rgba(16,61,45,.12); display: block; }
+    .content .product-shot figcaption { margin-top: 10px; font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+    .content .table-wrap { margin: 26px 0 32px; }
+    .book-finish .finish-kicker { margin: 0 0 12px; color: #a9cdb8; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .book-finish h2 { max-width: 680px; margin: 0 0 16px; font-size: clamp(32px, 5vw, 46px); line-height: 1.25; }
+    .book-finish p { max-width: 680px; margin: 0 0 14px; color: #cce0d3; font-size: 15px; line-height: 1.8; }
+    .source-note { margin: 30px 0 0; padding-top: 18px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .source-note b { color: var(--green-800); }
+    /* 深色尾页内需要更高对比度 */
+    .book-finish .source-note { color: #b6d0c0; border-top-color: rgba(255,255,255,.22); }
+    .book-finish .source-note b { color: #eaf4ee; }
+
+    /* 修复：.subsection h3 的大标题样式会渗入卡片内部 h3（mode-name / card h3），
+       导致卡片标题出现白底方块、深色卡片上白字不可见。此处只让带 data-section 的大标题生效。 */
+    .content .subsection h3:not([data-section]) {
+      margin: 0 0 8px;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      color: var(--green-900);
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+    .content .mode-card:nth-child(3) h3:not([data-section]),
+    .content .mode-card:nth-child(3) .mode-name { color: #fff; }
+    .content .mode-card .mode-name { font-family: Georgia, "Songti SC", serif; font-size: 26px; }
+
+  </style>
+  <link rel="stylesheet" href="assets/greenbook-site.css">
+</head>
+<body>
+  <a class="site-return" href="index.html#greenbooks" aria-label="返回逸鸣山海官网绿皮书系列">返回逸鸣山海 · 绿皮书</a>
+  <div class="page-shell">
+    <aside class="toc" aria-label="全书目录">
+      <p class="toc-kicker">QODER GREENBOOK</p>
+      <h2>从 AI IDE 到<br>生产控制面</h2>
+      <div class="toc-current" aria-live="polite"><b>当前阅读</b><span id="current-reading">01 · 认知重建</span></div>
+      <ol class="toc-tree">
+        <li>
+          <a class="chapter-link" data-chapter="01" href="#chapter01">认知重建</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="01" href="#c1-what">01.1 Qoder 到底是什么</a></li>
+            <li><a data-chapter="01" href="#c1-evaluate">01.2 五个问题评价 Coding Agent</a></li>
+            <li><a data-chapter="01" href="#c1-readmap">01.3 这本书怎么读</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="02" href="#chapter02">上手与工作面</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="02" href="#c2-surfaces">02.1 五个产品表面</a></li>
+            <li><a data-chapter="02" href="#c2-modes">02.2 四种模式怎么选</a></li>
+            <li><a data-chapter="02" href="#c2-spec">02.3 Spec 是队列入口</a></li>
+            <li><a data-chapter="02" href="#c2-firsttask">02.4 第一条真实任务</a></li>
+            <li><a data-chapter="02" href="#c2-cli">02.5 Qoder CLI</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="03" href="#chapter03">技术底盘</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="03" href="#c3-retrieval">03.1 多路检索系统</a></li>
+            <li><a data-chapter="03" href="#c3-compiler">03.2 两种中间表示</a></li>
+            <li><a data-chapter="03" href="#c3-budget">03.3 上下文预算</a></li>
+            <li><a data-chapter="03" href="#c3-runtime">03.4 Task Runtime</a></li>
+            <li><a data-chapter="03" href="#c3-sandbox">03.5 分级沙箱</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="04" href="#chapter04">知识治理</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="04" href="#c4-three-facts">04.1 三类事实</a></li>
+            <li><a data-chapter="04" href="#c4-flywheel">04.2 错误飞轮</a></li>
+            <li><a data-chapter="04" href="#c4-branch">04.3 分支没有唯一真相</a></li>
+            <li><a data-chapter="04" href="#c4-permission">04.4 衍生知识的权限</a></li>
+            <li><a data-chapter="04" href="#c4-poison">04.5 知识投毒</a></li>
+            <li><a data-chapter="04" href="#c4-checksum">04.6 七字段与纠错率</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="05" href="#chapter05">竞争与商业</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="05" href="#c5-six-keys">05.1 六把钥匙</a></li>
+            <li><a data-chapter="05" href="#c5-platform">05.2 平台生态现状</a></li>
+            <li><a data-chapter="05" href="#c5-business">05.3 三层税</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="06" href="#chapter06">安全与采购</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="06" href="#c6-datachain">06.1 画出完整数据链</a></li>
+            <li><a data-chapter="06" href="#c6-share">06.2 Share & Improve</a></li>
+            <li><a data-chapter="06" href="#c6-matrix">06.3 控制矩阵</a></li>
+            <li><a data-chapter="06" href="#c6-identity">06.4 身份生命周期</a></li>
+            <li><a data-chapter="06" href="#c6-audit">06.5 两类审计</a></li>
+            <li><a data-chapter="06" href="#c6-checklist">06.6 PoC 与合同清单</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="07" href="#chapter07">实战案例</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="07" href="#c7-experts">07.1 专家团实录</a></li>
+            <li><a data-chapter="07" href="#c7-qoderwork">07.2 QoderWork 六大场景</a></li>
+            <li><a data-chapter="07" href="#c7-helloqoder">07.3 HelloQoder 样本</a></li>
+            <li><a data-chapter="07" href="#c7-org">07.4 团队为什么更忙了</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="chapter-link" data-chapter="08" href="#chapter08">采用判断</a>
+          <ul class="toc-sublist">
+            <li><a data-chapter="08" href="#c8-endings">08.1 三种合理终局</a></li>
+            <li><a data-chapter="08" href="#c8-risks">08.2 六条失败路径</a></li>
+            <li><a data-chapter="08" href="#c8-metrics">08.3 四个领先指标</a></li>
+            <li><a data-chapter="08" href="#c8-action">08.4 行动清单</a></li>
+          </ul>
+        </li>
+      </ol>
+      <div class="toc-divider"></div>
+      <p class="toc-note">目录会跟随阅读位置自动标记当前小节。</p>
+    </aside>
+
+    <main class="book">
+      <header class="cover cover--with-ips">
+        <div class="edition">逸鸣山海研究实践版 · 8 CHAPTERS · 32 SECTIONS</div>
+        <h1>Qoder 绿皮书<span>从 AI IDE 到软件生产控制面</span></h1>
+        <p class="cover-lead">本书同时介绍功能操作、工程知识如何进入 Agent 上下文、任务如何成为可管理的工程事务，以及团队交付责任所需的边界。</p>
+        <div class="cover-ips" aria-label="慢漫与小明同学的 IP 形象">
+          <figure class="cover-ip"><span class="cover-ip__portrait"><img src="assets/greenbook-manman-ip-sheet.png" alt="慢漫 IP 形象" /></span><figcaption>慢漫 <small>MANMAN</small></figcaption></figure>
+          <figure class="cover-ip"><span class="cover-ip__portrait"><img src="assets/greenbook-xiaoming-ip-sheet.png" alt="小明同学 IP 形象" /></span><figcaption>小明同学 <small>XIAOMING</small></figcaption></figure>
+        </div>
+        <div class="cover-bottom">
+          <span>技术底盘 · 产品战略 · 知识治理 · 竞争格局 · 商业与安全</span>
+          <img class="cover-brand-logo" src="assets/ymsh-logo-white.png" alt="逸鸣山海 Logo" />
+        </div>
+      </header>
+
+      <section class="book-frontmatter" aria-label="版权说明与致谢">
+        <div><h2>版权与免责声明</h2><p>逸鸣山海 Team 保留本页原创编排和实践内容的相应权利。第三方商标、产品名称与引用资料归各权利人所有。本书为独立整理的学习资料，非产品官方文档；功能和价格请以官方信息为准。</p></div>
+        <div><h2>致谢</h2><p>感谢产品团队公开文档，也感谢分享案例与经验的创作者。</p></div>
+      </section>
+
+      <aside class="editor-note" aria-label="本书阅读说明">
+        <span class="editor-note__eyebrow">YMSH FIELD GUIDE · 阅读说明</span>
+        <h2>用软件生产系统的视角理解 Qoder。</h2>
+        <p>本书同时包含上手路径、技术拆解、知识治理、企业安全和团队采用方法。个人读者可以先看第 1、2、7 章；技术负责人和企业采购者应重点阅读知识治理、安全与 PoC 清单，并用自己的仓库和流程重新验证结论。本页依据 2026 年 10 月现有材料整理，功能、套餐、兼容范围与企业能力以产品当前页面为准。</p>
+        <div class="editor-note__grid"><span><strong>个人实践</strong>从模式选择和第一条真实任务开始。</span><span><strong>团队采用</strong>关注知识来源、分支边界与统一验收。</span><span><strong>企业评估</strong>把权限、审计、成本和退出机制写进 PoC。</span></div>
+      </aside>
+      <article class="content">
+
+        <div id="reading-map" class="reading-map">
+          <p class="chapter-map-kicker">READING MAP · 8 CHAPTERS</p>
+          <h2>这本书要解决四个问题</h2>
+          <div class="goal-grid">
+            <div class="goal"><strong>它到底是什么</strong><span>把 Editor 与 Quest 拆开看，理解快线与慢线为什么必须分开。</span></div>
+            <div class="goal"><strong>怎么用起来</strong><span>五个产品表面、四种模式、Spec 写法，以及一条能跑通的真实任务。</span></div>
+            <div class="goal"><strong>风险在哪</strong><span>知识治理、权限继承、跨表面一致性，以及一份可打勾的采购清单。</span></div>
+          </div>
+          <div class="goal-grid" style="margin-top:14px;">
+            <div class="goal"><strong>值不值</strong><span>六把钥匙的竞争格局，与席位 / 算力 / 组织记忆三层税的真实成本。</span></div>
+            <div class="goal"><strong>能到哪</strong><span>三种合理终局、六个失败路径，以及四个比用户数更值得看的指标。</span></div>
+            <div class="goal"><strong>今天做什么</strong><span>八条可以立刻启动的行动项，从知识体检到控制矩阵。</span></div>
+          </div>
+        </div>
+
+
+<section id="chapter01" class="chapter-page">
+  <header class="chapter-opener" data-number="01">
+    <p class="chapter-kicker">CHAPTER 01 · MINDSET</p>
+    <h2>先换掉你以为的那三个印象</h2>
+    <p>大多数人第一次用 Qoder，会把它归进「又一个 AI 编程 IDE」。这个印象会让你只用掉它三成能力。这一章先把三个常见误解拆掉，再建立判断任何 Coding Agent 的通用框架。</p>
+  </header>
+
+  <div id="c1-what" class="subsection">
+    <h3 data-section="SECTION 01.1">Qoder 到底是什么</h3>
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-04-product-strategy__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-04-product-strategy__image-02.jpg" alt="Qoder 的责任光谱：从 Editor 补全、Agent Mode、Quest、Experts 到 Cloud Agent，Agent 自治度、任务持续时间和运行独立性逐级上升，而人类参与度与产品控制要求逐级下降。安全与责任需求曲线随自治度同步上升——核心结论是：自治越高，可逆性和责任证据越不能下降。" loading="lazy"></a>
+  <figcaption>Qoder 的责任光谱：从 Editor 补全、Agent Mode、Quest、Experts 到 Cloud Agent，Agent 自治度、任务持续时间和运行独立性逐级上升，而人类参与度与产品控制要求逐级下降。安全与责任需求曲线随自治度同步上升——核心结论是：自治越高，可逆性和责任证据越不能下降。</figcaption>
+</figure>
+
+    <p class="lead">Qoder 是阿里巴巴旗下、基于通义大模型的 AI 编程 Agent 平台。2026 年 1.0 之后，它给自己的定位是「自主开发桌面」（Autonomous Development Desktop）——不再只是一款编辑器插件，而是一套把工程知识和任务运行时连起来的系统。</p>
+
+    <p>判断一家 Coding Agent 公司的产品线为什么这么宽，有一个非常省力的方法：把所有表面按「时间尺度」分类。你会发现它们几乎都落在两档里。</p>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <h3 class="mode-name">快线</h3>
+        <p>你敲下一个字符，模型在几百毫秒内判断你下一步要改什么。这里拼的是延迟、预测准确率和打断成本。</p>
+        <ul><li>毫秒级补全</li><li>Qoder NEXT 编辑预测</li><li>Editor Agent Mode</li></ul>
+      </div>
+      <div class="mode-card">
+        <h3 class="mode-name">慢线</h3>
+        <p>你把「做一个退款功能」交给 Quest，它可能工作几分钟、几小时，甚至在云端继续跑。这里拼的不是延迟，是任务能否收敛。</p>
+        <ul><li>Quest / Spec 驱动</li><li>Experts 多 Agent</li><li>Cloud Agent 异步</li></ul>
+      </div>
+      <div class="mode-card" style="background:var(--green-700);">
+        <h3 class="mode-name" style="color:#fff;">分家</h3>
+        <p style="color:#d3e6da;">把 Editor 与 Quest 拆成两个独立工作台，技术上等于承认一件事。</p>
+        <ul style="color:#d3e6da;"><li>预测下一次编辑</li><li>交付一个工程任务</li><li>根本不是同一道题</li></ul>
+      </div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-02.jpg" alt="Qoder 的两条生产线。快线是低延迟序列预测，慢线是带状态、工具和反馈回路的长事务。大量 AI IDE 把两者塞进同一个聊天框，结果两头都别扭。" loading="lazy"></a>
+  <figcaption>Qoder 的两条生产线。快线是低延迟序列预测，慢线是带状态、工具和反馈回路的长事务。大量 AI IDE 把两者塞进同一个聊天框，结果两头都别扭。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>核心判断：</strong>模型只是发动机，知识层和运行时才是变速箱、底盘和刹车。看懂这个比喻，才能看懂它为什么同时做 Editor、Quest、Experts、CLI、Cloud Agent，也能看懂它最大的技术风险为什么不是「模型不够聪明」。</div>
+
+    <h3>三个最常见的误解</h3>
+    <div class="mistake-grid">
+      <div class="mistake"><b>误解一：它就是 VS Code 加个聊天框</b><p>编辑器只是入口。真正值钱的部分在编辑器背后：一头把代码、提交、规范和对话压成 Agent 能直接调用的工程知识，另一头把一次聊天变成有工作区、执行边界、产物和验收标准的任务运行时。</p></div>
+      <div class="mistake"><b>误解二：模型越强，它就越好用</b><p>Qoder 同时支持 BYOK 与多模型路由，也训练自有的 Qwen-Coder-Qoder、Qoder NEXT。刻意不让模型成为单点依赖，反而说明它在赌「Harness」这一层。</p></div>
+      <div class="mistake"><b>误解三：多 Agent = 更快</b><p>Experts 单次任务可能比单 Agent 更慢，真正决定上限的是子任务是否独立、上下文是否最小充分、产物接口是否明确，以及最后有没有统一验收。</p></div>
+    </div>
+  </div>
+
+  <div id="c1-evaluate" class="subsection">
+    <h3 data-section="SECTION 01.2">换掉模型榜单，用五个问题评价任何 Coding Agent</h3>
+    <p>功能表会迅速过期，控制点比功能数量更稳定。下面五个问题，对 Codex、Claude Code、Cursor、Copilot、Kiro 同样成立。</p>
+
+    <div class="chain">
+      <span>能否半年后<br>仍读懂这个仓库<small>知识层</small></span><i>›</i>
+      <span>能否把失败<br>变成下次的约束<small>运行时</small></span><i>›</i>
+      <span>能否解释决策<br>来自哪条证据<small>可追溯</small></span><i>›</i>
+      <span>十个 Agent 并发时<br>责任链是否清楚<small>审计</small></span><i>›</i>
+      <span>出错后能否<br>干净地撤回<small>可逆性</small></span>
+    </div>
+
+    <ul class="checklist">
+      <li><strong>上下文与运行时优先。</strong>看 Coding Agent 不要先看模型榜单，先看它怎么找上下文、怎么划任务边界。</li>
+      <li><strong>向量检索只是起点。</strong>结构关系、提交意图和多跳搜索，才决定它在老项目里的表现。</li>
+      <li><strong>多 Agent 的上限由接口决定。</strong>不由 Agent 数量决定，不由头像有几个决定。</li>
+      <li><strong>可逆性要随自治度提高。</strong>越自治，越需要一键撤回，而不是越少。</li>
+      <li><strong>真正的技术风险有三个。</strong>错误知识被稳定复用、权限政策跨表面失配、验证跟不上生成。</li>
+    </ul>
+
+    <div class="note-strip"><strong>一句话总结：</strong>「它能不能写出这个功能」是一次演示题。真正该问的是，它能否在半年后仍然准确理解这个仓库。</div>
+  </div>
+
+  <div id="c1-readmap" class="subsection">
+    <h3 data-section="SECTION 01.3">这本书怎么读</h3>
+    <p>全书分四部分，共 8 章。如果你的时间有限，按下面的顺序读。</p>
+    <div class="brief-grid">
+      <div class="brief-item"><b>只想用起来</b><span>第 2 章（工作面与四种模式）→ 第 7 章（实战案例）→ 第 6 章（安全清单自检）</span></div>
+      <div class="brief-item"><b>要做技术选型</b><span>第 2 章 → 第 3 章（技术底盘）→ 第 5 章（六把钥匙）</span></div>
+      <div class="brief-item"><b>要做企业采购</b><span>第 4 章（知识治理）→ 第 6 章（安全与责任链）→ 第 5 章商业模式部分</span></div>
+      <div class="brief-item"><b>要看行业格局</b><span>第 5 章（六把钥匙）→ 第 8 章（终局判断与四个领先指标）</span></div>
+    </div>
+    <div class="system-tip">这本书讲的是判断方法，不是产品操作手册。工具会变、模型会轮换，但知识怎么治理、任务怎么划边界、责任怎么落到人身上，这几件事不会变。遇到和自己实际情况不符的地方，以你团队的实测为准。</div>
+  </div>
+</section>
+
+<section id="chapter02" class="chapter-page">
+  <header class="chapter-opener" data-number="02">
+    <p class="chapter-kicker">CHAPTER 02 · GETTING STARTED</p>
+    <h2>工作面、四种模式与第一条任务</h2>
+    <p>认识 Qoder 的五个产品表面，学会按任务风险选对模式，并用一条真实任务跑通从 Spec 到交付的完整闭环。</p>
+  </header>
+
+  <div id="c2-surfaces" class="subsection">
+    <h3 data-section="SECTION 02.1">五个产品表面，一张图看懂</h3>
+    <p class="lead">Qoder 在不到一年里铺出了 Editor、Quest、Experts、CLI、Cloud、SDK、QoderWork、QoderWake 和 Marketplace。速度很快，代价是用户很难一眼理解每个表面的能力边界。先把这张地图记住，后面所有判断都有依托。</p>
+
+    <div class="scenario-grid">
+      <div class="card">
+        <div class="icon">E</div>
+        <h3>Editor</h3>
+        <p>像 VS Code 一样写代码。行内补全由 Qoder NEXT 驱动，Agent Mode 可改多文件，人始终在代码旁边。</p>
+        <span class="mini-label">结对关系 · 低延迟</span>
+      </div>
+      <div class="card">
+        <div class="icon">Q</div>
+        <h3>Quest</h3>
+        <p>独立任务工作台。从 Spec 出发，检索、编码、测试、Review、Commit、PR 一路走到交付，可进 Worktree 或 Cloud。</p>
+        <span class="mini-label">委派关系 · 长事务</span>
+      </div>
+      <div class="card">
+        <div class="icon">X</div>
+        <h3>Experts</h3>
+        <p>Team Lead 拆任务，前端、后端、QA、Reviewer、DevOps 并行。适合耦合度低的大任务。</p>
+        <span class="mini-label">团队委派 · 注意不支持 Revert</span>
+      </div>
+      <div class="card">
+        <div class="icon">C</div>
+        <h3>Cloud Agent</h3>
+        <p>任务跑在 Qoder 托管的云端容器，电脑可以关机。时间与人解耦，但上下文和能力都变窄。</p>
+        <span class="mini-label">异步执行 · 显式实验特性</span>
+      </div>
+      <div class="card">
+        <div class="icon">W</div>
+        <h3>QoderWork</h3>
+        <p>把同一套 Harness 搬到桌面办公任务。文件整理、PPT 生成、论文解读、定时任务，本地运行。</p>
+        <span class="mini-label">办公场景 · Skills 沉淀</span>
+      </div>
+      <div class="card">
+        <div class="icon">D</div>
+        <h3>Qoder CLI / SDK</h3>
+        <p>脱离 IDE 的终端入口与可编程运行时。支持多模型、BYOK、动态工作流、Remote Control 与安全扫描。</p>
+        <span class="mini-label">可嵌入 · 企业级权限</span>
+      </div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-04-product-strategy__image-01.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-04-product-strategy__image-01.jpg" alt="Qoder 的产品不是「两个模式」，而是两种工作关系：Editor 是结对，Quest 是委派。对产品设计的要求完全不同——结对要低延迟、可随手拒绝；委派要边界稳定、状态可恢复、结果可验收。" loading="lazy"></a>
+  <figcaption>Qoder 的产品不是「两个模式」，而是两种工作关系：Editor 是结对，Quest 是委派。对产品设计的要求完全不同——结对要低延迟、可随手拒绝；委派要边界稳定、状态可恢复、结果可验收。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>选表面的唯一标准：</strong>这个任务需要多长的连续时间？几分钟用 Editor，几小时用 Quest，跨 Agent 大范围改造用 Experts，要在你离开电脑时继续跑用 Cloud。</div>
+  </div>
+
+  <div id="c2-modes" class="subsection">
+    <h3 data-section="SECTION 02.2">四种模式：Ask / Agent / Experts / Quest</h3>
+    <p>模式选择是 Qoder 里最高杠杆的一个决定。选错不会毁掉任务，但会让过程变慢、Credits 白烧、边界失控。</p>
+
+    <div class="decision" aria-label="Qoder 模式选择建议">
+      <div class="decision-line"><span>只想读懂代码、解释一段实现，不需要写入任何文件</span><strong>选 Ask</strong></div>
+      <div class="decision-line"><span>改一个函数、跨几个文件修一个 bug、写一组独立脚本</span><strong>选 Agent</strong></div>
+      <div class="decision-line"><span>边界清楚但体量大的需求，多文件多角色，前后端都要动</span><strong>选 Quest</strong></div>
+      <div class="decision-line"><span>耦合度低的大任务，可以真正切成互不干扰的并行子任务</span><strong>选 Experts</strong></div>
+      <div class="decision-line"><span>要跑几十分钟到几小时，你要离开电脑</span><strong>选 Cloud</strong></div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-04-product-strategy__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-04-product-strategy__image-04.jpg" alt="把「放手」做成可控动作：小改动即时结对，边界清楚的工作异步委派，复杂任务先做 Spec，高风险动作强制批准，结果用证据验收，必要时随时接管。产品成熟度最终体现在这四个问题上——在哪运行、能访问什么、何时介入、如何撤回与交付。" loading="lazy"></a>
+  <figcaption>把「放手」做成可控动作：小改动即时结对，边界清楚的工作异步委派，复杂任务先做 Spec，高风险动作强制批准，结果用证据验收，必要时随时接管。产品成熟度最终体现在这四个问题上——在哪运行、能访问什么、何时介入、如何撤回与交付。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>不要把 Task Runtime 当成「更长的聊天」。</strong>它的价值在于把工作区、执行、产物、交付和知识这五类边界写死。没有边界的长任务，跑得越久越不敢放手。</div>
+
+    <div class="note-strip"><strong>关于 Experts 的现实提醒：</strong>多 Agent 的收益要扣掉拆解成本、上下文传递损失、合并成本和统一验收成本。Experts 单次任务可能比单 Agent 更慢，它赌的是用提前验证和减少返工来改善整个周期。改一个横跨权限、数据模型和前端状态的核心流程时，过早并行只会让每个 Agent 基于不同假设工作。</div>
+
+    <h3>多 Agent 是否划算，用一个公式判断</h3>
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-05-org-bottleneck__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-05-org-bottleneck__image-03.jpg" alt="多 Agent 的净收益不等于 Agent 数量。右侧列出的四类协调税——任务拆解成本、上下文传递损失、合并成本、统一验收成本——都要从并行收益里扣掉。高耦合的核心流程属于「不适合并行」的场景。" loading="lazy"></a>
+  <figcaption>多 Agent 的净收益不等于 Agent 数量。右侧列出的四类协调税——任务拆解成本、上下文传递损失、合并成本、统一验收成本——都要从并行收益里扣掉。高耦合的核心流程属于「不适合并行」的场景。</figcaption>
+</figure>
+
+    <div class="template-card"><b>净收益公式</b>
+净收益 = 并行节省的执行时间 − 任务拆解成本 − 上下文传递损失 − 合并与统一验收成本
+
+写一组彼此独立的迁移脚本 → 划算
+扫描不同模块补测试  → 划算
+改一个横跨三层的核心流程 → 通常不划算</div>
+  </div>
+
+  <div id="c2-spec" class="subsection">
+    <h3 data-section="SECTION 02.3">Spec 不是文档，是队列入口</h3>
+    <p>很多人把 Spec-driven development 理解成「让 AI 先写一篇更长的 PRD」。这会把好东西用坏。Spec 的组织价值不在于文档更漂亮，而在于把任务送进执行队列之前，先定义边界、约束和验收。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-04-product-strategy__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-04-product-strategy__image-03.jpg" alt="Agent 委派的交接协议：需求与意图、计划与确认、执行与协作、产出与交付、验收与闭环，共四次交接。每次交接都可能丢信息，而可见性应分三层——十秒看懂、必要时下钻、事故追查。核心指标不是 Agent 能跑多久，而是最低交接损耗。" loading="lazy"></a>
+  <figcaption>Agent 委派的交接协议：需求与意图、计划与确认、执行与协作、产出与交付、验收与闭环，共四次交接。每次交接都可能丢信息，而可见性应分三层——十秒看懂、必要时下钻、事故追查。核心指标不是 Agent 能跑多久，而是最低交接损耗。</figcaption>
+</figure>
+
+
+    <h3>一组来自真实落地的数字</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>做法</th><th>首次完成度</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>PRD 直接生成 Spec</td><td>约 70%</td><td>还需要 50 轮以上澄清</td></tr>
+          <tr><td>产品与工程师逐行对齐，Agent 反问确认</td><td>接近可执行</td><td>人工投入前置，返工大幅减少</td></tr>
+          <tr><td>大 Spec（单任务过大）</td><td>约 60%</td><td>任务内部依赖和例外互相干扰</td></tr>
+          <tr><td>拆小后的 Spec</td><td>可达 95%</td><td>最终控制在 100 行左右，最长不超过 150 行</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted);">数字不宜当作普遍规律，但方法值得认真看。有一家客户的做法尤其值得注意：他们要求<b>每条约束都能转成测试</b>——这是整套方法里最关键的一条。</p>
+
+    <div class="checklist">
+      <li>一份好 Spec 应该像<b>可以进入调度系统的工单</b>：目标清楚、前置条件齐全、边界明确、失败标准可见。</li>
+      <li>不能验收的约束，对 Agent 和对人一样，只是意见。</li>
+      <li>Spec 控制在 100 行左右。太大时任务内部会互相干扰。</li>
+      <li>每条约束都要能转成测试，否则它无法验证。</li>
+    </div>
+
+    <h3>一份可以直接改写的 Spec 模板</h3>
+    <div class="prompt-box">
+      <div class="prompt-head"><span>Spec 模板 · 可复制后修改</span><span>控制在 100 行内</span></div>
+      <div class="prompt-body">【目标】一句话说明要达成什么用户可感知的结果。
+
+【范围】明确包含哪些模块；明确不包含哪些。
+
+【约束】
+- 接口 / 数据模型必须满足：……
+- 禁止使用的模式：……
+- 当前框架版本 X，不得调用更高版本 API。
+
+【验收标准】每一条都要能转成测试
+- [ ] 输入 …… 时，输出必须等于 ……
+- [ ] 不得出现 …… 日志 / 请求
+- [ ] 性能：…… 场景下 P95 < ……
+
+【失败标准】什么情况算做失败，必须回滚。
+
+【执行边界】可以修改的文件范围；禁止触碰的路径。</div>
+    </div>
+  </div>
+
+  <div id="c2-firsttask" class="subsection">
+    <h3 data-section="SECTION 02.4">跑通你的第一条真实任务</h3>
+    <p>下面用一个「给订单服务加幂等」的真实场景跑通完整流程。这个场景选得好，因为它天然包含所有关键要素：跨文件、有历史包袱、有明确的验收标准。</p>
+
+    <h3>开始前准备</h3>
+    <ul class="checklist">
+      <li>先读一遍这个仓库的 Knowledge Cards 和 RepoWiki，确认它对订单服务的描述和你理解的一致。</li>
+      <li>确认工作区是干净的，或者任务跑在独立 Worktree 里。</li>
+      <li>确认当前分支策略：Knowledge Cards 建议在 main/master 生成。</li>
+      <li>首次执行建议选 Agent 模式；任务明显变大时切到 Quest。</li>
+    </ul>
+
+    <h3>可以直接改写的任务描述</h3>
+    <div class="prompt-box">
+      <div class="prompt-head"><span>第一条任务 · 示例指令</span><span>可复制后修改</span></div>
+      <div class="prompt-body">在订单服务里增加幂等支持。
+
+背景：同一笔订单可能因为客户端重试被创建两次。请先检索仓库中现有的幂等实现、库存扣减的事务边界，以及提交历史里相关的改动原因，再动手。
+
+约束：
+- 复用现有 Redis 客户端和错误码规范，不要引入新依赖；
+- 幂等键沿用 order_no，不新增字段；
+- 不得在事务内发起 HTTP 调用；
+- 必须先读 Knowledge Cards，如果卡片和代码冲突，以代码为准并告诉我冲突点。
+
+验收标准（每条都要转成测试）：
+1. 相同 order_no 重复提交，返回首次创建的订单 ID；
+2. 并发重复提交不产生第二条记录；
+3. 幂等键过期后重新提交，可以创建新订单。
+
+交付：先给我 Spec，我确认后再执行。完成后附上测试结果和改动文件清单。</div>
+    </div>
+
+    <div class="formula" aria-label="清晰任务描述的五个组成部分">
+      <div>背景<br>为什么</div><div>约束<br>不能碰</div><div>验收<br>怎么算对</div><div>边界<br>改哪里</div><div>交付<br>要什么</div>
+    </div>
+
+    <h3>发送后要看什么</h3>
+    <ol class="steps">
+      <li><b>确认它找对了上下文</b><span>如果它引用的知识卡片和你的理解不符，立刻纠正。错误知识一旦被接受，会稳定复现。</span></li>
+      <li><b>检查 Spec 再放行</b><span>Spec 是你唯一一次「冻结意图」的机会。此时纠正成本最低，执行中纠正成本会指数上升。</span></li>
+      <li><b>观察它有没有复用已有实现</b><span>如果它另起炉灶而不是复用仓库里已有的模式，说明上下文检索没起作用。</span></li>
+      <li><b>看验证证据，不只看完成提示</b><span>要求它给出实际跑过的测试命令和结果，而不是「已完成」。</span></li>
+    </ol>
+
+    <div class="highlight"><strong>最关键的一句话约束：</strong>「如果卡片和代码冲突，以代码为准并告诉我冲突点。」这一句能同时做到两件事——防止错误知识被固化，又让冲突暴露出来变成可治理的资产。</div>
+  </div>
+
+  <div id="c2-cli" class="subsection">
+    <h3 data-section="SECTION 02.5">Qoder CLI：终端里的那套 Harness</h3>
+    <p>如果你的工作流已经在终端和 CI 里，CLI 是最直接的入口。Qoder CLI 支持多模型切换、BYOK、动态工作流和一键从 Claude Code 迁移。</p>
+
+    <div class="folder-tree" aria-label="Qoder CLI 常用命令">
+      <span class="folder">Qoder CLI 常用命令</span><br>
+      /login<span class="comment"># 登录（网页授权或 Access Token）</span><br>
+      /init<span class="comment"># 生成或更新 AGENTS.md（对应 Claude Code 的 CLAUDE.md）</span><br>
+      /status<span class="comment"># 版本、模型、账号、API 连通性、用量</span><br>
+      /model<span class="comment"># 切换模型；支持 Default / New Models / Custom</span><br>
+      /compact<span class="comment"># 压缩上下文</span>　/effort <span class="comment"># 调整思考深度</span><br>
+      /agents<span class="comment"># 查看、创建、管理子 Agent</span><br>
+      /memory<span class="comment"># 用户级 / 项目级 / 本地记忆概览</span><br>
+      /workflows　/tasks<span class="comment"># 动态工作流进度、日志与结果</span><br>
+      /security-scan<span class="comment"># 手动触发安全扫描（L1 / L2 / L3）</span>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-16-cli__media_b11_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-16-cli__media_b11_p1.jpg" alt="Qoder CLI 采用一绿到底的家族风格，常用命令齐全。迁移工具会把 settings、MCP servers、commands、skills、agents、hooks、memory（CLAUDE.md 转 AGENTS.md）、permissions 和 plugins 一起带过去，账号与会话信息仍需单独配置。" loading="lazy"></a>
+  <figcaption>Qoder CLI 采用一绿到底的家族风格，常用命令齐全。迁移工具会把 settings、MCP servers、commands、skills、agents、hooks、memory（CLAUDE.md 转 AGENTS.md）、permissions 和 plugins 一起带过去，账号与会话信息仍需单独配置。</figcaption>
+</figure>
+
+    <h3>从 Claude Code 迁移：能带走什么</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>会迁移</th><th>不会迁移</th></tr></thead>
+        <tbody>
+          <tr><td>settings、output styles、permissions</td><td>auth state、OAuth / session 文件</td></tr>
+          <tr><td>MCP servers（含 .mcp.json 与 settings.mcpServers）</td><td>managed settings、remote settings</td></tr>
+          <tr><td>commands、skills、agents、hooks、plugins</td><td>trust caches</td></tr>
+          <tr><td>memory（CLAUDE.md → AGENTS.md）</td><td>账号与会话信息（需在 Qoder 单独配置）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>三级安全扫描：提交前跑 L3</h3>
+    <p>CLI 默认开启安全扫描，分三级递进：</p>
+    <div class="workflow" aria-label="Qoder CLI 三级安全扫描">
+      <div class="workflow-step"><b>L1 静态检查</b><span>危险函数、敏感信息泄露</span></div>
+      <div class="workflow-step"><b>L2 本次修改</b><span>SQL 注入、远程命令执行</span></div>
+      <div class="workflow-step"><b>L3 跨文件追踪</b><span>数据流分析</span></div>
+      <div class="workflow-step"><b>提交 / PR / 发布前</b><span>建议必跑 L3</span></div>
+    </div>
+    <p>可扫整个仓库、指定文件目录，或只检查当前改动。需要特别注意的是：<strong>CLI 的权限和 Hooks 主要审计工具调用</strong>。如果企业要求完整追踪所有网络流量，仍然要结合代理、网关或 VPC 出口日志。</p>
+  </div>
+</section>
+
+<section id="chapter03" class="chapter-page">
+  <header class="chapter-opener" data-number="03">
+    <p class="chapter-kicker">CHAPTER 03 · TECHNOLOGY</p>
+    <h2>技术底盘：工程知识如何进入 Agent</h2>
+    <p>检索、编译、预算、运行时、模型、沙箱。这一章拆开 Qoder 最值钱也最容易被误解的部分。</p>
+  </header>
+
+  <div id="c3-retrieval" class="subsection">
+    <h3 data-section="SECTION 03.1">它不是在「搜代码」，而是在搭多路检索</h3>
+    <p class="lead">Coding Agent 最常见的翻车，不是不会写语法，而是拿错上下文。让它给订单服务加幂等：只搜 idempotency 可能找到一篇过期文档；只做向量检索可能找到语义相似但不在调用链上的实现；只用 grep 又可能错过名称不同、实际共享事务边界的库存逻辑。</p>
+
+    <div class="scenario-grid">
+      <div class="card">
+        <div class="icon">向</div>
+        <h3>向量检索</h3>
+        <p>负责找「意思像」的代码和文档。擅长语义近似，不保证结构关系正确。</p>
+      </div>
+      <div class="card">
+        <div class="icon">图</div>
+        <h3>Code Graph</h3>
+        <p>负责找调用、引用、继承、实现这些结构关系。回答「东西在哪」。</p>
+      </div>
+      <div class="card">
+        <div class="icon">史</div>
+        <h3>Commit Graph</h3>
+        <p>把「为什么改」接到「改了什么」上。回答「当初为什么」，这是最难找的一层。</p>
+      </div>
+      <div class="card">
+        <div class="icon">典</div>
+        <h3>RepoWiki / Knowledge Cards</h3>
+        <p>提供架构、规范和技术栈这些高层约束。让 Agent 知道什么不能做。</p>
+      </div>
+      <div class="card">
+        <div class="icon">忆</div>
+        <h3>Memory</h3>
+        <p>补充个人偏好和过去任务经验。也是最容易出错的一层，见第四章。</p>
+      </div>
+      <div class="card">
+        <div class="icon">策</div>
+        <h3>Agentic Search</h3>
+        <p>决定先走哪条路、什么时候换路、搜到什么程度可以停。</p>
+      </div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-03.jpg" alt="多路检索系统。搜索和实现是两种认知任务，混在一个上下文里既贵又容易脏。Qoder 把检索交给专门的 Search Agent，只把整理后的路径、行号和摘要交回主模型。" loading="lazy"></a>
+  <figcaption>多路检索系统。搜索和实现是两种认知任务，混在一个上下文里既贵又容易脏。Qoder 把检索交给专门的 Search Agent，只把整理后的路径、行号和摘要交回主模型。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>Commit Graph 为什么重要：</strong>代码是实现语言，需求是意图语言，两者之间一直有沟。函数名和用户说法未必相同，Embedding 只能估算语义相近。提交历史天然夹在中间——一边是「修复超卖」「调整退款状态机」这样的意图摘要，另一边是具体 Diff。Qoder 用模型增强质量差的提交信息，再走「查询 → 提交意图 → 代码」的两段式检索。这不是多炫的算法发明，却很懂真实工程。</div>
+  </div>
+
+  <div id="c3-compiler" class="subsection">
+    <h3 data-section="SECTION 03.2">把知识编译成两种「中间表示」</h3>
+    <p>RepoWiki 容易被理解成自动文档，Knowledge Card 也容易被理解成另一种 RAG。这样看就浅了。Knowledge Engine 2.0 给出的链路是：原始信号先被提炼为高密度 Knowledge Cards，再由卡片组织成人能阅读的 RepoWiki。</p>
+
+    <h3>为什么不直接从代码生成 Wiki</h3>
+    <p>因为人和 Agent 对信息密度的需求不一样。</p>
+    <div class="platform-grid">
+      <div class="card">
+        <div class="icon">人</div>
+        <h3>人需要叙事</h3>
+        <p>模块怎么分、为什么这么设计、改动会影响谁、取舍在哪里。</p>
+        <span class="mini-label">→ RepoWiki</span>
+      </div>
+      <div class="card">
+        <div class="icon">机</div>
+        <h3>Agent 需要约束</h3>
+        <p>接口契约是什么、哪些模式禁止使用、当前框架版本是多少、交付前必须跑哪些检查。</p>
+        <span class="mini-label">→ Knowledge Cards</span>
+      </div>
+    </div>
+
+    <div class="scenario-grid">
+      <div class="card"><h3>Agent 真正需要的卡片内容</h3><ul class="plain-list"><li>这个服务禁止直连数据库</li><li>订单状态只能通过状态机迁移</li><li>新增接口必须保持幂等</li><li>当前使用某框架版本，不得调用更高版本 API</li><li>交付前必须跑哪组测试</li></ul></div>
+      <div class="card"><h3>如果只保留卡片会怎样</h3><p>人看不到为什么有这条规则，很难质疑和修订。</p><h3 style="margin-top:14px;">如果只保留 Wiki 会怎样</h3><p>Token 贵，注意力散，执行时抓不住重点。</p></div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-04.jpg" alt="工程记忆编译器的数据流：代码与提交 → 工程知识 → Agent 上下文 → 任务执行 → 新代码与新经验 → 再次更新工程知识。它不是存档，而是把经验转换成下一次执行时可调用的东西。" loading="lazy"></a>
+  <figcaption>工程记忆编译器的数据流：代码与提交 → 工程知识 → Agent 上下文 → 任务执行 → 新代码与新经验 → 再次更新工程知识。它不是存档，而是把经验转换成下一次执行时可调用的东西。</figcaption>
+</figure>
+
+    <div class="template-card"><b>Knowledge Card 示例（机器可执行密度）</b>
+scope: services/order-service/** · branch: main
+rule:    订单状态只能通过 OrderStateMachine 迁移，禁止直接 UPDATE status 字段
+reason:  2026-03 线上事故，直接更新导致退款状态机错乱
+verify:  test/order/test_state_machine.py 必须通过
+version: order-core 2.4.0+
+owner:   @zhangsan
+confidence: confirmed</div>
+  </div>
+
+  <div id="c3-budget" class="subsection">
+    <h3 data-section="SECTION 03.3">上下文工程不是多塞资料，是做预算</h3>
+    <p>上下文窗口再大，也不是免费的仓库。Qoder 曾公开一个极端案例：某次任务输入约 12 万 Token，其中 93.5% 是工具定义，而且这些工具一次都没被调用。只挂了两个闲置 MCP Server，就可能带来近百个工具定义。模型还没看代码，桌面已经摆满扳手说明书。</p>
+
+    <p>处理方式是渐进式加载：启动时只放 Skills 或工具的名称和一句话说明；模型判断需要时，再加载完整定义。渐进式加载让 Skills 自动调用率和 Token 消耗都有改善。代价也很明确：一句话描述写歪了，模型就可能永远找不到那个 Skill。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-06.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-06.jpg" alt="Qoder 既做模型，又故意让模型变得不重要。通用大模型负责上限，自有模型负责高频、低延迟和工具适配；BYOK 免费开放则是为了不让商业模式押死在模型轮换上。" loading="lazy"></a>
+  <figcaption>Qoder 既做模型，又故意让模型变得不重要。通用大模型负责上限，自有模型负责高频、低延迟和工具适配；BYOK 免费开放则是为了不让商业模式押死在模型轮换上。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>这件事揭示的真相：</strong>工具越多，能力不一定越强；工具说明本身会跟代码争夺注意力。Agent Harness 的水平，往往就藏在这些「不性感」的预算里。</div>
+
+    <h3>一个可以直接用的检查表</h3>
+    <div class="folder-tree" aria-label="上下文预算检查清单">
+      <span class="folder">Harness 自检</span><br>
+      ├── <span class="file">MCP Server 数量</span> <span class="comment"># 每挂一个都是常驻上下文成本</span><br>
+      ├── <span class="file">Skill 一句话描述</span> <span class="comment"># 写歪了模型永远找不到</span><br>
+      ├── <span class="file">工具定义占比</span> <span class="comment"># 超过 30% 就该考虑渐进式加载</span><br>
+      └── <span class="file">子 Agent 切分</span> <span class="comment"># 每个 Agent 只拿最小而充分的上下文</span>
+    </div>
+  </div>
+
+  <div id="c3-runtime" class="subsection">
+    <h3 data-section="SECTION 03.4">Task Runtime 才是 1.0 的分水岭</h3>
+    <p>聊天有一个致命问题：边界很模糊。它从哪里开始？当前文件还是整个仓库？中间产物放在哪里？改坏了回到哪一步？这次结论下次还算不算数？任务完成的标志是一段回复，还是一组通过测试的改动？</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-05.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-05.jpg" alt="Task Runtime 强调工作区、执行、产物、交付和知识五类边界。配合 Local、Worktree、Cloud VM，以及任务级的 Review、Diff、Commit 和 PR，聊天才开始像一个可管理的工程事务。" loading="lazy"></a>
+  <figcaption>Task Runtime 强调工作区、执行、产物、交付和知识五类边界。配合 Local、Worktree、Cloud VM，以及任务级的 Review、Diff、Commit 和 PR，聊天才开始像一个可管理的工程事务。</figcaption>
+</figure>
+
+    <h3>多 Agent 只是并发，运行时才是地基</h3>
+    <p>没有稳定运行时，并发会把问题放大：几个 Agent 同时改文件、共享不一致上下文、重复调用工具，最后人类花更多时间合并。真正决定效果的不是头像有几个，而是四件事：</p>
+    <div class="checklist">
+      <li>子任务是否<b>真的独立</b>。</li>
+      <li>每个 Agent 是否拿到<b>最小而充分的上下文</b>。</li>
+      <li>中间产物有没有<b>明确的接口</b>。</li>
+      <li>最后有没有<b>统一验收</b>，而不是把几个答案拼起来。</li>
+    </div>
+
+    <h3>自有模型的两个技术细节</h3>
+    <p><strong>Qoder NEXT</strong> 用 AST 构造编辑轨迹，再通过 ActionRL 把训练重点放在「第一次分歧的动作」上。这个设计很实用：如果一条五步编辑链只在第二步犯错，传统偏好训练可能把整条负样本都压下去，连正确前缀一起罚；ActionRL 只盯住首次分叉点，避免模型因为怕错而什么都不建议。</p>
+    <p><strong>Qwen-Coder-Qoder</strong> 则针对 Qoder 自己的工具、知识系统和 Agent Loop 做强化学习，产品使用数据变成奖励信号，再回到模型训练。这条「模型—Agent—产品」飞轮，理论上能持续优化工具选择、命令执行和 Token 成本。</p>
+  </div>
+
+  <div id="c3-sandbox" class="subsection">
+    <h3 data-section="SECTION 03.5">安全不是一个开关，是每层都要有边界</h3>
+    <p>Agent 能写文件、跑 Bash、访问网络、调用 MCP。能力越完整，攻击面越像一套小型操作系统。Qoder 在 Quest 里采用分级执行：普通命令直接跑，高风险命令根据模式要求确认或进入沙箱。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-07.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-07.jpg" alt="分级执行与沙箱边界。macOS 用 Seatbelt，Linux 依赖 bubblewrap，Windows 使用自有沙箱。工作区设为可写，其他路径只读，并隐藏 ~/.ssh 等敏感目录。网络过滤目前主要还是粗粒度开关。" loading="lazy"></a>
+  <figcaption>分级执行与沙箱边界。macOS 用 Seatbelt，Linux 依赖 bubblewrap，Windows 使用自有沙箱。工作区设为可写，其他路径只读，并隐藏 ~/.ssh 等敏感目录。网络过滤目前主要还是粗粒度开关。</figcaption>
+</figure>
+
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>平台</th><th>沙箱实现</th><th>企业要注意</th></tr></thead>
+        <tbody>
+          <tr><td>macOS</td><td>Seatbelt（系统原生）</td><td>相对可靠，注意网络过滤粒度较粗</td></tr>
+          <tr><td>Linux</td><td>bubblewrap（bwrap）</td><td><b>缺 bwrap 会降级为非沙箱模式并提示</b>。企业应在设备管理或启动检查里强制失败，而不是指望用户看见提示</td></tr>
+          <tr><td>Windows</td><td>自有用户态沙箱</td><td>不能完整抵御已有高权限的对抗性进程。高风险仓库应优先用独立 VM 或容器边界</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="highlight"><strong>比弹窗更正确的方向：</strong>每条命令都弹窗，人会条件反射地点允许。真正有效的是能力边界和默认隔离——默认无权限、最小可写范围、细粒度网络、短期凭证和可复现环境。</div>
+
+    <p>还要注意一个容易被忽略的裂缝：<strong>Experts Mode 当前不支持 Revert</strong>，同时它对非内置风险命令会忽略用户自定义 blocklist，潜在危险命令转入沙箱执行。这说明高自治仍在拿可逆性和控制粒度换吞吐。技术债不在宣传页，而在这些边界条件里。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-01-tech-architecture__image-08.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-01-tech-architecture__image-08.jpg" alt="三层复利与三处软肋。复利来自知识沉淀、模型与 Agent 适配、团队流程锁定；软肋则是错误知识会稳定复现、多 Agent 提高验证压力、平台表面扩张快于生态成熟。" loading="lazy"></a>
+  <figcaption>三层复利与三处软肋。复利来自知识沉淀、模型与 Agent 适配、团队流程锁定；软肋则是错误知识会稳定复现、多 Agent 提高验证压力、平台表面扩张快于生态成熟。</figcaption>
+</figure>
+
+    <h3>本章合格线</h3>
+    <div class="end-checks" style="margin-top:14px;">
+      <div><b>01 · 检索</b>能说清 Commit Graph 补的是哪一层</div>
+      <div><b>02 · 编译</b>能区分 Card 与 Wiki 各自服务谁</div>
+      <div><b>03 · 预算</b>能检查自己挂了多少闲置 MCP</div>
+    </div>
+  </div>
+</section>
+
+<section id="chapter04" class="chapter-page">
+  <header class="chapter-opener" data-number="04">
+    <p class="chapter-kicker">CHAPTER 04 · KNOWLEDGE GOVERNANCE</p>
+    <h2>知识治理：价值与风险同时放大</h2>
+    <p>下一代技术债不在代码本身，而在机器从旧代码里总结出的错误规范。这一章讲怎么区分资产和堆积场。</p>
+  </header>
+
+  <div id="c4-three-facts" class="subsection">
+    <h3 data-section="SECTION 04.1">自动更新不等于自动正确：三类事实</h3>
+    <p class="lead">Qoder 强调 Knowledge Cards 和 RepoWiki 会随提交增量更新，这比半年一次的文档大会靠谱。但「跟着代码变」只能解决时效性的一部分。</p>
+
+    <p>举个常见场景。团队为了处理一次线上故障，在支付模块加了临时降级开关。代码合并，知识引擎观察到新模式，把它总结为「支付失败时优先走降级通道」。两周后故障过去，开关逻辑保留但不再推荐使用。代码仍在，知识卡也仍然「准确」，可它已经不是团队的规范。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-02-knowledge-governance__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-02-knowledge-governance__image-02.jpg" alt="三类事实的分离：描述性事实、历史事实、规范性事实。自动分析最容易拿到第一类，结合提交可能推断第二类，最难的是第三类——而 Agent 真正写代码时最需要的恰好是第三类。" loading="lazy"></a>
+  <figcaption>三类事实的分离：描述性事实、历史事实、规范性事实。自动分析最容易拿到第一类，结合提交可能推断第二类，最难的是第三类——而 Agent 真正写代码时最需要的恰好是第三类。</figcaption>
+</figure>
+
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>事实类型</th><th>含义</th><th>自动分析能力</th><th>示例</th></tr></thead>
+        <tbody>
+          <tr><td>描述性事实</td><td>代码现在确实有这个分支</td><td>最容易拿到</td><td>存在降级开关这个 if 分支</td></tr>
+          <tr><td>历史事实</td><td>它是为某次故障临时加入的</td><td>结合提交可推断</td><td>2026-02 为解决支付超时加入</td></tr>
+          <tr><td>规范性事实</td><td>新功能是否应该继续采用</td><td><b>最难，必须人工</b></td><td>新功能不应再依赖降级通道</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="highlight"><strong>这就是「下一代技术债」：</strong>不是旧代码本身，而是机器从旧代码里总结出的错误规范。过去新人可能复制一段烂代码；未来 Agent 会把它提炼成知识，再批量复制到更多地方，甚至在 Code Review 时批评别人没有遵守。如果系统把「仓库里存在」误译成「组织认可」，技术债就会被包装成最佳实践。</div>
+  </div>
+
+  <div id="c4-flywheel" class="subsection">
+    <h3 data-section="SECTION 04.2">知识飞轮也可能是错误飞轮</h3>
+    <p>Qoder 描绘的闭环很诱人：任务越多，Memory 越丰富；提交越多，RepoWiki 越完整；团队用得越久，Agent 越懂业务。但正向飞轮成立有一个前提：系统能够区分成功经验、偶然相关和失败尝试。</p>
+
+    <p>真实项目里，事情远没有「任务完成 = 经验正确」这么简单。一个补丁通过现有测试，可能只是测试不够；一次上线没出事故，可能只是流量太小；一条方案被接受，可能是负责人没时间细看；某个用户连续修正 Agent，也可能不是个人偏好，而是平台本身理解错了。</p>
+
+    <div class="mistake-grid">
+      <div class="mistake"><b>幸存者偏差</b><p>只记住合并的方案，不知道还有更好的方案因为进度原因没做。</p></div>
+      <div class="mistake"><b>权威偏差</b><p>职位更高的人一次临时决定，被固化成全局规范。</p></div>
+      <div class="mistake"><b>近因偏差</b><p>最近几次任务的模式盖过长期规则。</p></div>
+      <div class="mistake"><b>自证循环（最危险）</b><p>Agent 按某条知识生成代码，新代码再被知识引擎读取，用来证明那条知识是主流做法。它会让一个小误差获得越来越多「仓库证据」。</p></div>
+    </div>
+
+    <div class="note-strip"><strong>结论：</strong>知识飞轮不能只设计写入通道，还必须设计质疑、衰减和删除通道。<strong>没有遗忘机制的组织记忆，不是资产，是堆积场。</strong></div>
+  </div>
+
+  <div id="c4-branch" class="subsection">
+    <h3 data-section="SECTION 04.3">分支世界里，没有唯一真相</h3>
+    <p>Qoder 文档建议在 main/master 和常用开发分支生成 Knowledge Cards，并把 <code>.qoder/repowiki</code> 提交到仓库共享。好处是可版本化、可跟代码一起评审，也减少纯云端黑箱。但任何做过大型并行研发的人都会追问：哪个分支的知识是真的？</p>
+
+    <p>主分支说接口 v1 仍是标准，重构分支已经迁到 v2；热修复分支临时恢复旧行为；两个地区版本又各有合规限制。代码可以靠 Git 合并，知识冲突却不是文本冲突那么简单。两张卡片可能文字都对，只是适用范围不同。</p>
+
+    <div class="scenario-grid">
+      <div class="card"><h3>如果只做「最新版覆盖旧版」</h3><p>会把分支上下文抹平，热修复分支的临时行为会污染主线规范。</p></div>
+      <div class="card"><h3>如果全部保留</h3><p>会在检索时给 Agent 相互矛盾的约束，它可能同时遵守两条互斥规则。</p></div>
+    </div>
+
+    <h3>企业知识至少需要五个维度</h3>
+    <div class="chain">
+      <span>仓库和<br>分支</span><i>›</i>
+      <span>生效版本<br>或时间</span><i>›</i>
+      <span>适用模块<br>和场景</span><i>›</i>
+      <span>来源与<br>责任人</span><i>›</i>
+      <span>与其他知识的<br>优先级关系</span>
+    </div>
+
+    <p>repo+branch 的版本锁和冲突处理只能算技术仲裁，对企业来说还不够。真正需要的是「政策即代码」式治理：<b>谁能发布全局规则，谁只能提交建议，冲突由谁批准，回滚如何追踪。</b>否则，知识库越完整，争议只会藏得越深。</p>
+  </div>
+
+  <div id="c4-permission" class="subsection">
+    <h3 data-section="SECTION 04.4">权限不能只管代码，还要管衍生知识</h3>
+    <p>这是很多企业最容易漏掉的一层。假设某位开发者有权限查看薪酬系统，但大多数工程师没有。知识引擎从该仓库提炼出一张卡片，写着员工等级与奖金规则。原始代码仍然锁得很严，可卡片被放进团队级知识，再被其他 Agent 检索到。</p>
+
+    <div class="highlight"><strong>源码没有泄露，敏感业务含义却已经泄露。</strong>所以「我们不存源码」并不能回答知识引擎的安全问题。Embedding、摘要、Knowledge Card、RepoWiki、对话 Memory 都是源码和业务流程的衍生数据，它们必须继承原始对象的权限，且权限变化后能同步撤销。</div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-02-knowledge-governance__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-02-knowledge-governance__image-03.jpg" alt="衍生知识的权限继承链条。Embedding、摘要、Knowledge Card、RepoWiki、对话 Memory 都可能包含可还原的业务逻辑，必须继承原始对象的访问限制。" loading="lazy"></a>
+  <figcaption>衍生知识的权限继承链条。Embedding、摘要、Knowledge Card、RepoWiki、对话 Memory 都可能包含可还原的业务逻辑，必须继承原始对象的访问限制。</figcaption>
+</figure>
+
+    <h3>企业必须问的五个问题</h3>
+    <ul class="checklist">
+      <li>卡片是否<b>记录来源文件和原始 ACL</b>？</li>
+      <li>多个来源合并后，权限取<b>并集还是交集</b>？</li>
+      <li>员工离职或仓库权限收回后，已生成的<b>个人 Memory 如何处理</b>？</li>
+      <li>团队知识被另一个 Agent 调用时，是否<b>留下可追踪记录</b>？</li>
+      <li>输出只透露概念、不透露代码时，系统<b>按什么标准判定越权</b>？</li>
+    </ul>
+    <div class="system-tip">这些问题比「数据有没有加密」难得多。加密保护存储，权限治理决定谁该看到什么。</div>
+  </div>
+
+  <div id="c4-poison" class="subsection">
+    <h3 data-section="SECTION 04.5">知识投毒：Agent 时代的供应链攻击</h3>
+    <p>过去攻击者想影响构建结果，可能篡改依赖、脚本或 CI。现在多了一条路：影响 Agent 的上下文。一段恶意注释、一份伪装成规范的文档、一个来自第三方插件的 Skill，都可能诱导 Agent 使用不安全命令、绕过检查或把数据发送到外部工具。</p>
+
+    <p>更隐蔽的是：系统如果把一次被污染的成功会话提炼为 Memory，攻击就获得了<b>持久性</b>。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-02-knowledge-governance__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-02-knowledge-governance__image-04.jpg" alt="机器知识治理：七字段与三流水线。生成流水线可以快，但进入团队级知识要分级审批；执行流水线要求高风险知识变成确定性约束；淘汰流水线要有过期检测、冲突告警、使用统计和一键回滚。" loading="lazy"></a>
+  <figcaption>机器知识治理：七字段与三流水线。生成流水线可以快，但进入团队级知识要分级审批；执行流水线要求高风险知识变成确定性约束；淘汰流水线要有过期检测、冲突告警、使用统计和一键回滚。</figcaption>
+</figure>
+
+    <h3>把知识当供应链资产管理</h3>
+    <ul class="plain-list">
+      <li>外部 Skill 和插件要有<b>来源、版本和签名</b>。</li>
+      <li>自动生成知识要<b>标注原始证据</b>。</li>
+      <li>从对话沉淀到团队知识<b>必须经过审批</b>。</li>
+      <li>高风险规范要能映射为<b>确定性 Hook、测试或策略</b>，而不是只写一句自然语言。</li>
+      <li>任何知识更新都要有 <b>Diff 和回滚</b>。</li>
+    </ul>
+    <div class="note-strip"><strong>关键原则：</strong>自然语言很适合表达经验，不适合单独承担安全边界。关键规则必须落成机器可验证的控制。</div>
+  </div>
+
+  <div id="c4-checksum" class="subsection">
+    <h3 data-section="SECTION 04.6">七字段治理制度与一个被忽略的指标</h3>
+    <p>如果把这类系统真正放进企业，我会要求每条关键知识至少带七个字段：</p>
+
+    <div class="brief-grid">
+      <div class="brief-item"><b>来源</b><span>来自代码、提交、文档、对话还是人工录入。</span></div>
+      <div class="brief-item"><b>适用范围</b><span>仓库、分支、模块、地区和业务场景。</span></div>
+      <div class="brief-item"><b>责任人</b><span>谁有权确认、修改和废止。</span></div>
+      <div class="brief-item"><b>置信度</b><span>事实、推断还是建议。</span></div>
+      <div class="brief-item"><b>生效期</b><span>永久规则、临时措施还是待验证假设。</span></div>
+      <div class="brief-item"><b>验证方式</b><span>对应测试、Hook、策略或审查项。</span></div>
+      <div class="brief-item"><b>权限标签</b><span>继承哪些原始数据的访问限制。</span></div>
+    </div>
+
+    <div class="highlight"><strong>一个过去几乎没人统计的指标：知识命中后的纠错率。</strong>如果一张卡片被调用一百次，四十次都被开发者改掉，它不是热门知识，而是热门错误。只统计调用率会把问题藏起来。</div>
+
+    <h3>护城河不是「记得多」，而是「记得可信」</h3>
+    <p>模型可以换，编辑器可以学，价格也能跟。一个团队多年积累的架构卡片、历史意图、验收方法、Skills 和任务经验，却很难一夜迁走。但如果用户无法知道一条结论从哪来、何时生成、适用于哪个分支、被谁确认，所谓「越用越懂你」迟早会变成「越用越不敢动」。</p>
+
+    <div class="checklist">
+      <li>自动 Wiki 解决文档生产，<b>不自动解决知识真实性</b>。</li>
+      <li>错误知识被 Agent 复用后，会形成比复制烂代码<b>更快的自证循环</b>。</li>
+      <li>关键自然语言规则应<b>落成测试、Hook 或策略</b>。</li>
+      <li>知识系统的核心指标不是生成量，而是<b>命中准确率、纠错率、过期率和可追溯性</b>。</li>
+    </div>
+  </div>
+</section>
+
+<section id="chapter05" class="chapter-page">
+  <header class="chapter-opener" data-number="05">
+    <p class="chapter-kicker">CHAPTER 05 · LANDSCAPE &amp; BUSINESS</p>
+    <h2>竞争与成本：六个控制点、三类成本</h2>
+    <p>把六家 AI 编程工具放进功能表会得到一片对勾。真正差异不在「有没有」，而在谁控制工作流的关键节点。</p>
+  </header>
+
+  <div id="c5-six-keys" class="subsection">
+    <h3 data-section="SECTION 05.1">AI 编程的六把钥匙</h3>
+    <p class="lead">模型决定上限，编辑器决定注意力，仓库决定系统记录，运行时决定可靠性，知识决定长期锁定，企业分发决定能不能成交。控制点比功能数量稳定得多。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-06-competitive__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-06-competitive__image-02.jpg" alt="六把钥匙竞争格局地图。功能会同质化，控制点决定长期位置。Qoder 的主押注是工程知识与任务运行时，再借 Alibaba Cloud 拿企业分发。" loading="lazy"></a>
+  <figcaption>六把钥匙竞争格局地图。功能会同质化，控制点决定长期位置。Qoder 的主押注是工程知识与任务运行时，再借 Alibaba Cloud 拿企业分发。</figcaption>
+</figure>
+
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>钥匙</th><th>决定什么</th><th>谁占优</th><th>为什么</th></tr></thead>
+        <tbody>
+          <tr><td>模型</td><td>能力上限、工具稳定性、长任务韧性、成本曲线</td><td>模型公司（OpenAI、Anthropic）</td><td>模型与产品反馈路径短，可做专门优化</td></tr>
+          <tr><td>编辑器</td><td>高频注意力与行为信号</td><td>Cursor</td><td>成为开发者写代码时的默认界面，调用摩擦最低</td></tr>
+          <tr><td>仓库与交付</td><td>系统记录与组织级审计</td><td>GitHub Copilot</td><td>握着 Issue、PR、Review、Actions 和开发者身份</td></tr>
+          <tr><td>Agent 运行时</td><td>任务能跑多久、用什么工具、如何隔离、怎样恢复</td><td>Claude Code / Codex</td><td>终端原生可组合，或本地与云端双运行</td></tr>
+          <tr><td>工程知识</td><td>长期切换成本</td><td><b>Qoder</b></td><td>把知识做成专门层，并从提交增量更新</td></tr>
+          <tr><td>企业分发</td><td>能不能签合同、能不能进云账单</td><td><b>Qoder（Alibaba Cloud）</b></td><td>可沿用云账号、合同、信用额度和发票</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>六家公司各自在守什么地盘</h3>
+    <div class="scenario-grid">
+      <div class="card"><div class="icon">Cu</div><h3>Cursor 守编辑器</h3><p>胜负手是保持开发者默认界面，并把 Background Agents 和企业能力无缝叠上去。</p></div>
+      <div class="card"><div class="icon">GH</div><h3>Copilot 守仓库</h3><p>不必拥有最独特的 IDE，只要 Agent 最自然地从 Issue 走到 PR，再进入企业策略。</p></div>
+      <div class="card"><div class="icon">CC</div><h3>Claude Code 守终端</h3><p>依靠模型、可组合运行时和口碑，让高级用户把自己的工作方式围绕它重构。</p></div>
+      <div class="card"><div class="icon">Cx</div><h3>Codex 守操作台</h3><p>把 OpenAI 模型、ChatGPT 分发、CLI、App、Cloud、Skills 和多 Agent 连在一起。</p></div>
+      <div class="card"><div class="icon">Ki</div><h3>Kiro 守规范与 AWS</h3><p>把 Specs、Steering、Hooks 和云沙箱变成默认研发方法，适合重流程、重治理团队。</p></div>
+      <div class="card"><div class="icon">Qd</div><h3>Qoder 守知识与交付</h3><p>想证明模型会轮换，真正留下的是组织知道什么，以及 Agent 如何按这些知识完成任务。</p></div>
+    </div>
+
+    <h3>Qoder 与 Codex 最根本的差别</h3>
+    <div class="platform-grid">
+      <div class="card">
+        <h3>Codex：通用 Agent 操作台</h3>
+        <p>优势来自「通用智能 + 多表面分发 + Agent 操作台」。在 ChatGPT、CLI、IDE、App 和 Cloud 之间延伸，用 Skills、Plugins、MCP 与多 Agent 进入各种工作流。OpenAI 的模型迭代直接抬高整个产品上限。</p>
+      </div>
+      <div class="card">
+        <h3>Qoder：专用工程记忆系统</h3>
+        <p>优势主张是「工程知识 + 专用任务运行时 + 企业双市场」。更强调 Repo 层知识、提交意图、Knowledge Cards、RepoWiki 和组织经验，让 Agent 在一个具体代码库里越用越懂。</p>
+      </div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-06-competitive__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-06-competitive__image-03.jpg" alt="六家公司地盘划分。每一家的核心筹码不同：Cursor 是默认界面，Copilot 是系统记录，Claude Code 是终端心智，Codex 是通用操作台，Kiro 是 Spec 加 AWS，Qoder 是工程记忆加 Alibaba Cloud。" loading="lazy"></a>
+  <figcaption>六家公司地盘划分。每一家的核心筹码不同：Cursor 是默认界面，Copilot 是系统记录，Claude Code 是终端心智，Codex 是通用操作台，Kiro 是 Spec 加 AWS，Qoder 是工程记忆加 Alibaba Cloud。</figcaption>
+</figure>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-06-competitive__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-06-competitive__image-04.jpg" alt="默认责任层之争。编辑器时代，默认工具决定你在哪里写代码；Agent 时代，默认系统决定什么任务交给谁、允许访问什么、使用哪种知识、花多少算力、由谁验收。这比编辑器更靠近组织权力中心。" loading="lazy"></a>
+  <figcaption>默认责任层之争。编辑器时代，默认工具决定你在哪里写代码；Agent 时代，默认系统决定什么任务交给谁、允许访问什么、使用哪种知识、花多少算力、由谁验收。这比编辑器更靠近组织权力中心。</figcaption>
+</figure>
+
+    <h3>不同团队，不同最优解</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>团队类型</th><th>更值得关注</th><th>原因</th></tr></thead>
+        <tbody>
+          <tr><td>个人开发者 / 高自主技术用户</td><td>先看模型手感、终端效率、价格</td><td>Claude Code、Codex、Cursor 都有强吸引力，Qoder 的 BYOK 降低试用门槛</td></tr>
+          <tr><td>以 GitHub 为中心的大型组织</td><td>Copilot 的系统记录优势</td><td>不需要引入新的工作系统，Agent 直接长在现有交付链里</td></tr>
+          <tr><td>重遗留系统、知识流失严重的企业</td><td>Qoder 的 Knowledge Engine</td><td>但必须同时建立知识治理，否则会放大错误固化</td></tr>
+          <tr><td>强规范、强调需求到设计追踪</td><td>Kiro 的 Spec-first</td><td>Qoder Quest 覆盖类似流程，但产品哲学更偏知识与委派</td></tr>
+          <tr><td>中国受监管行业 / Alibaba Cloud 客户</td><td>Qoder CN</td><td>采购、模型和数据路径具有结构性优势</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="highlight"><strong>别再问谁是「最好的 AI IDE」。</strong>没有一款工具会在所有团队里赢。组织现有的代码托管、编辑器、云、模型合同和治理能力，往往比产品功能多两个对勾更重要。未来真正值钱的公司，可能早就不想当 IDE 了。</div>
+  </div>
+
+  <div id="c5-platform" class="subsection">
+    <h3 data-section="SECTION 05.2">平台生态：能力接口与生态成熟度</h3>
+    <p>Qoder 的可编程表面已经相当完整：CLI、Agent SDK、Cloud Agent、Skills、MCP、Hooks、Plugins、Marketplace 一应俱全。这不是单纯加功能，它在形成一套 Agent 平台常见的分层：模型负责推理，Harness 负责循环，Skill 负责方法，MCP 负责外部能力，Hook 负责强制动作，Plugin 负责包装，Marketplace 负责分发，Cloud Runtime 负责托管。</p>
+
+
+    <p>但「接口已发布」和「平台网络效应已形成」是两件事。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-03-platform-ecosystem__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-03-platform-ecosystem__image-02.jpg" alt="本地与云端的运行时差异。本地 SDK 能配置 MCP Servers、Settings、Hooks、Plugins、权限、checkpoint，而实验状态的 Cloud Agent SDK 明确不支持这些，传入还会直接报错。" loading="lazy"></a>
+  <figcaption>本地与云端的运行时差异。本地 SDK 能配置 MCP Servers、Settings、Hooks、Plugins、权限、checkpoint，而实验状态的 Cloud Agent SDK 明确不支持这些，传入还会直接报错。</figcaption>
+</figure>
+
+    <p>最近的一次公开快照：Marketplace 网页仍显示「No skills found」，插件仓库为空，Agent SDK npm 周下载约 1,550 次，依赖者数量很少。QoderAI 组织有 25 个公开仓库，但拆开后大量是 changelog、demo、Homebrew 分发和 SDK 演示。</p>
+
+    <div class="chain">
+      <span>运行时<br>统一</span><i>›</i>
+      <span>可信<br>分发</span><i>›</i>
+      <span>第三方<br>收益</span>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-03-platform-ecosystem__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-03-platform-ecosystem__image-04.jpg" alt="Qoder 平台的三场硬仗：运行时统一、可信分发、第三方收益。三场打赢，它会从一个高频产品变成别人构建 Agent 业务时依赖的底座；打不赢，CLI、SDK 和 Marketplace 就只是产品功能清单的一部分。" loading="lazy"></a>
+  <figcaption>Qoder 平台的三场硬仗：运行时统一、可信分发、第三方收益。三场打赢，它会从一个高频产品变成别人构建 Agent 业务时依赖的底座；打不赢，CLI、SDK 和 Marketplace 就只是产品功能清单的一部分。</figcaption>
+</figure>
+
+    <p>这三场硬仗决定 Qoder 能否成为平台。<b>平台不是公司宣布出来的。平台是第三方在你上面投入了无法轻易撤回的时间、代码、客户和信誉以后，才成立的。</b>Qoder 现在已经把门打开了。接下来要看的，是不是有人愿意在里面开店，以及顾客敢不敢进来。</p>
+
+    <h3>Agent Marketplace 比浏览器插件市场更难做</h3>
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-03-platform-ecosystem__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-03-platform-ecosystem__image-03.jpg" alt="Agent 插件市场需要五套基础设施：兼容性声明、权限清单、可复现评测、供应链安全和企业分发。浏览器插件通常有明确 API，而 Agent 插件的行为取决于模型版本、上下文和工具权限，同一个 Skill 升级后可能就变了触发方式。" loading="lazy"></a>
+  <figcaption>Agent 插件市场需要五套基础设施：兼容性声明、权限清单、可复现评测、供应链安全和企业分发。浏览器插件通常有明确 API，而 Agent 插件的行为取决于模型版本、上下文和工具权限，同一个 Skill 升级后可能就变了触发方式。</figcaption>
+</figure>
+    <p>浏览器插件通常有明确 API。Agent 插件的行为取决于自然语言、模型版本、上下文、工具权限和运行环境——同一个 Skill 今天好用，模型升级后可能触发方式就变了。所以至少需要五套基础设施：</p>
+    <ul class="plain-list">
+      <li><strong>兼容性声明</strong>：支持哪些 Qoder 版本、模型层级、本地或云运行时。</li>
+      <li><strong>权限清单</strong>：会读哪些文件、执行哪些命令、连接哪些域名和 MCP。</li>
+      <li><strong>可复现评测</strong>：在标准任务集上的触发率、成功率、成本和失败样例。</li>
+      <li><strong>供应链安全</strong>：签名、版本固定、依赖清单、撤回与漏洞通知。</li>
+      <li><strong>企业分发</strong>：管理员审核、私有市场、强制版本和分组投放。</li>
+    </ul>
+
+    <div class="note-strip"><strong>一个值得警惕的细节：</strong>文档里常见的 <code>npx …@latest</code> 安装方式，对个人试用方便，对生产环境却意味着供应链内容可随时变化。平台必须引导企业使用锁版本、哈希校验和审批，而不是把「安装成功」当成终点。</div>
+
+    <h3>最值得观察的指标不是下载量</h3>
+    <div class="evidence-map">
+      <div><b>触发正确率</b><span>Skill 被正确触发的比例</span></div>
+      <div><b>成功率提升</b><span>使用后任务成功率提高多少</span></div>
+      <div><b>上下文节省</b><span>平均节省多少 Token 与人工纠正</span></div>
+      <div><b>内部复用率</b><span>多少任务复用了同一能力</span></div>
+      <div><b>结果贡献率</b><span>第三方贡献的交付，而非调用次数</span></div>
+    </div>
+    <p>一个 Skill 下载十万次，每次只给模型多塞两千 Token，平台看起来繁荣，用户却在交智商税。一个只在五十家银行内部使用的合规插件，若能稳定挡住高风险变更，商业价值反而大得多。</p>
+  </div>
+
+  <div id="c5-business" class="subsection">
+    <h3 data-section="SECTION 05.3">三层税：席位、算力、组织记忆</h3>
+    <p>Qoder 的价格表看起来像普通 SaaS：个人版 Pro 每月 20 美元含 2,000 Credits，Pro+ 60 美元含 6,000，Ultra 200 美元含 20,000。Teams 每席位 40 美元含 3,000 Credits。Enterprise 每席位 20 美元却<b>不含任何 Credits</b>。算清这笔账就会发现，Enterprise 并不更便宜，而是把治理席位和 AI 算力拆开收费。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-07-business-model__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-07-business-model__image-02.jpg" alt="三层收费结构。蓝色是 SaaS 治理收入（Seat 层），橙色是算力消耗收入（Credits 层），深紫是长期留存与锁定（Memory 层）。Enterprise 的低席位价不是降价，而是治理与算力的拆分。" loading="lazy"></a>
+  <figcaption>三层收费结构。蓝色是 SaaS 治理收入（Seat 层），橙色是算力消耗收入（Credits 层），深紫是长期留存与锁定（Memory 层）。Enterprise 的低席位价不是降价，而是治理与算力的拆分。</figcaption>
+</figure>
+
+    <h3>100 人团队的粗算</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>方案</th><th>席位费</th><th>算力</th><th>月总成本</th><th>关键差异</th></tr></thead>
+        <tbody>
+          <tr><td>Teams</td><td>40 × 100 = 4,000 美元</td><td>含 30 万 Credits</td><td><b>4,000 美元</b></td><td>不能跨人共享，闲置额度月底清零</td></tr>
+          <tr><td>Enterprise</td><td>20 × 100 = 2,000 美元</td><td>需另买 150 份共享包 × 40 = 6,000 美元</td><td><b>8,000 美元</b></td><td>可共享、可限额、可集中治理</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Enterprise 比 Teams 贵一倍，换来的是共享、限额和集中治理。这对厂商有利：治理层毛利更接近 SaaS，推理层不会因为重度用户把成本吃穿。对客户也有合理性：可以让 100 人都受政策管理，只给真正高频使用者分配更多算力。</p>
+
+    <div class="system-tip"><strong>采购提示：</strong>不能拿席位价直接比竞品，必须把预计 Credits 加回去再比。Credits 越抽象，厂商越灵活；越抽象，客户越难预测总拥有成本。</div>
+
+    <h3>Credits 既是成本转嫁工具，也是行为设计工具</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>动作类型</th><th>参考消耗</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>Ask（50K / 200K 上下文）</td><td>约 3 / 4 Credits</td><td>最便宜，适合日常小事</td></tr>
+          <tr><td>Editor Agent</td><td>约 7 / 12 Credits</td><td>单文件到多文件修改</td></tr>
+          <tr><td>Quest Agent</td><td>约 50 Credits</td><td>完整任务委派</td></tr>
+          <tr><td>Experts</td><td>约 75 Credits</td><td>多 Agent 团队</td></tr>
+          <tr><td>生成 RepoWiki</td><td>约 50 Credits</td><td>知识生成成本不低</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted);">按中位数粗算，Pro 的 2,000 Credits 理论上只够约 40 次 Quest Agent，或约 26 次 Experts，还没扣日常Ask、Agent 和知识生成。<b>用户买的不是无限使用，而是一桶推理燃料。</b></p>
+
+    <h3>BYOK 免费，不是放弃模型收入</h3>
+    <p>2026 年 4 月 Qoder 推出 Community Edition，个人用户可免费 BYOK。用户的疑问是：自己付模型费，Qoder 还赚什么？答案是 Qoder 在主动把模型层商品化。</p>
+    <p>这和云计算早期「支持开源数据库，但收费卖托管、治理和可靠性」很像。它给自己的定位是提供 Agent Harness——翻成商业话就是：<b>发动机你可以自带，但车架、变速箱、导航、车队管理和维修记录留在我这里。</b></p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-07-business-model__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-07-business-model__image-03.jpg" alt="组织记忆税。数据是组织资产，导出权决定迁移成本，迁移成本决定城墙深度。席位和 Credits 都容易比价，组织知识不容易——这才是第三层收费，也是最难被竞品撬动的部分。" loading="lazy"></a>
+  <figcaption>组织记忆税。数据是组织资产，导出权决定迁移成本，迁移成本决定城墙深度。席位和 Credits 都容易比价，组织知识不容易——这才是第三层收费，也是最难被竞品撬动的部分。</figcaption>
+</figure>
+
+    <div class="highlight"><strong>护城河和锁定，只隔着合同里一条导出条款。</strong>从客户角度这也是必须谈判的数据可携带性问题：知识能否导出，格式是否开放，删除后衍生数据如何处理，迁移时是否保留来源和权限。</div>
+
+    <h3>真正的毛利战在模型路由和上下文效率</h3>
+    <p>Qoder 对外按 Credits 收费，对内要付真实 Token 和算力成本。利润空间取决于三件事：<b>模型混合</b>（简单搜索用便宜模型，关键规划用强模型）、<b>上下文压缩</b>（少喂无关代码和工具定义）、<b>任务收敛</b>（少走无效轮次）。</p>
+    <p>这解释了 Qoder 为什么同时投入 Agentic Search、Skills 动态加载、Qwen-Coder-Qoder、Qoder NEXT 和模型策略。它们不只是体验优化，也是毛利工程。AI SaaS 最终会像云数据库一样，产品能力和成本工程绑在一起。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-07-business-model__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-07-business-model__image-04.jpg" alt="六层销售漏斗：从免费补全与 BYOK 获取个人开发者，到 Alibaba Cloud Marketplace 与 Qoder CN 解决地区与行业采购，最后把同一企业从 Coding 扩到 QoderWork、QoderWake 和 Cloud Agents。" loading="lazy"></a>
+  <figcaption>六层销售漏斗：从免费补全与 BYOK 获取个人开发者，到 Alibaba Cloud Marketplace 与 Qoder CN 解决地区与行业采购，最后把同一企业从 Coding 扩到 QoderWork、QoderWake 和 Cloud Agents。</figcaption>
+</figure>
+
+    <h3>这门生意最终看四个数字</h3>
+    <div class="evidence-map">
+      <div><b>付费任务验收率</b><span>烧掉 Credits 后有多少结果真的进入生产</span></div>
+      <div><b>净 Credits 毛利</b><span>扣除模型、云执行、索引和支持后的真实毛利</span></div>
+      <div><b>企业扩张率</b><span>从开发席位扩到更多团队和产品的速度</span></div>
+      <div><b>知识留存价值</b><span>使用时间越长，续费和任务成功是否真提高</span></div>
+    </div>
+    <div class="note-strip"><strong>最值得警惕的：</strong>如果复杂任务消耗高、验收率却不稳定，客户会觉得自己同时支付了订阅费、算力费和人工返工费。那三层税就会从商业模式变成三重不满。</div>
+  </div>
+</section>
+
+<section id="chapter06" class="chapter-page">
+  <header class="chapter-opener" data-number="06">
+    <p class="chapter-kicker">CHAPTER 06 · SECURITY &amp; PROCUREMENT</p>
+    <h2>企业安全不能只看源码存储</h2>
+    <p>企业买 Coding Agent 不能只问「是否存源码」。本章给出一张完整数据流、六问责任链，以及一份可直接用的 PoC 与合同清单。</p>
+  </header>
+
+  <div id="c6-datachain" class="subsection">
+    <h3 data-section="SECTION 06.1">先把整条数据链画出来</h3>
+    <p class="lead">Qoder 的 Agent 会索引仓库、生成衍生知识、执行终端命令、连接 MCP、安装插件、在本地或云端运行，再把结果写回代码库。整条链路上每一步都涉及数据、执行、身份、审计和供应链。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-08-enterprise-security__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-08-enterprise-security__image-02.jpg" alt="Agent 数据链全景。左边是企业设备与本地状态，中间是 Qoder 服务、云托管与第三方供应商，右边是分包商。核心结论：源码不落库 ≠ 业务含义没有离开过边界，Embedding、知识卡、Memory 都是衍生数据。" loading="lazy"></a>
+  <figcaption>Agent 数据链全景。左边是企业设备与本地状态，中间是 Qoder 服务、云托管与第三方供应商，右边是分包商。核心结论：源码不落库 ≠ 业务含义没有离开过边界，Embedding、知识卡、Memory 都是衍生数据。</figcaption>
+</figure>
+
+    <p>公开技术说明显示：早期混合检索架构把 Code Graph 放在客户端，向量数据库在服务端，检索前客户端用文件内容哈希证明拥有对应代码；索引文档表示 Qoder 不存储源码。Knowledge Engine 2.0 强调知识生成在客户端完成，服务端接收结构化 Knowledge Cards，而非原始代码。</p>
+
+    <h3>这些设计减少了原文暴露，但企业仍要追问</h3>
+    <ul class="checklist">
+      <li>Embedding 在哪里生成、<b>存多久、如何删除</b>？</li>
+      <li>Knowledge Card 是否包含<b>可还原的业务逻辑</b>？</li>
+      <li>RepoWiki 和 Memory 在<b>本地、Qoder 云还是企业存储</b>？</li>
+      <li>代码片段是否会在模型请求中<b>发送给模型供应商</b>？</li>
+      <li>Web 搜索、MCP 和插件会不会把上下文带到第三方？</li>
+      <li>分支删除、员工离职和仓库撤权后，<b>衍生数据如何同步清理</b>？</li>
+    </ul>
+
+    <div class="highlight"><strong>数据驻留的现实：</strong>Qoder 隐私政策把 Inputs 与 Outputs 一并定义为 User Content，并列出 Qwen、Kimi、代码库数据存储和 Web Search 等服务商类型。数据可能在美国、新加坡和日本处理和存储。对跨国企业，必须按功能和地区做数据映射，而不是只看公司注册地。</div>
+  </div>
+
+  <div id="c6-share" class="subsection">
+    <h3 data-section="SECTION 06.2">Share &amp; Improve 条款必须单独谈</h3>
+    <p>Qoder 2026 年 5 月更新的隐私政策写明，去标识化的 User Content 可用于研究、开发和改进服务，保留期最长可达五年；是否可通过「Share &amp; Improve」退出取决于计划，退出前已处理的数据仍可能继续保留和使用。</p>
+
+    <p>这不等于 Qoder 一定拿企业代码训练模型，也不等于处理不合规。它意味着采购方必须确认自己所购计划的实际默认值、管理员控制、历史数据处理和合同优先级。</p>
+
+    <div class="brief-grid">
+      <div class="brief-item"><b>业务内容是否默认不用于模型或产品改进</b><span>要写进合同，不能只看公开政策。</span></div>
+      <div class="brief-item"><b>去标识化是否覆盖源码、知识卡、终端输出和反馈</b><span>四类都要点名确认。</span></div>
+      <div class="brief-item"><b>退出设置由个人还是组织管理员控制</b><span>个人设置在企业环境里通常无效。</span></div>
+      <div class="brief-item"><b>已处理数据是否可删除</b><span>不能删除的法律或技术依据要写明。</span></div>
+      <div class="brief-item"><b>分包商和模型供应商是否受同样限制</b><span>需要一份可核对的清单。</span></div>
+      <div class="brief-item"><b>合同优先级</b><span>公共隐私政策是起点，不是企业 DPA 的替代品。</span></div>
+    </div>
+  </div>
+
+  <div id="c6-matrix" class="subsection">
+    <h3 data-section="SECTION 06.3">不同产品表面的安全能力不能想当然</h3>
+    <p>Qoder Desktop、Quest、CLI、Cloud Mode、Agent SDK 和 Cloud Agent SDK 并非同一套控制。企业最常见的事故，是安全团队审核了一个表面，业务随后使用另一个表面。</p>
+
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>表面</th><th>权限模型</th><th>沙箱</th><th>Hooks</th><th>关键限制</th></tr></thead>
+        <tbody>
+          <tr><td>Editor / Agent Mode</td><td>逐次确认</td><td>基础隔离</td><td>—</td><td>支持按会话 Revert</td></tr>
+          <tr><td>Quest / Experts</td><td>Agent Mode 按风险命令确认</td><td>Seatbelt / bwrap / 自有</td><td>—</td><td><b>Experts 不支持 Revert，且忽略用户 blocklist</b></td></tr>
+          <tr><td>CLI</td><td>allow / ask / deny + 多种权限模式</td><td>可配置</td><td>PreToolUse / PostToolUse</td><td>权限与 Hooks 主要审计工具调用，不覆盖全部网络流量</td></tr>
+          <tr><td>Cloud Mode</td><td>Qoder 托管 VM</td><td>云端隔离</td><td>—</td><td>只读远程 GitHub 状态，<b>不带本地未提交改动</b></td></tr>
+          <tr><td>Cloud Agent SDK</td><td>实验状态</td><td>云端</td><td><b>不支持</b></td><td><b>不支持本地 MCP、Settings、Hooks、Plugins、权限和 checkpoint</b></td></tr>
+          <tr><td>Qoder CN / VPC</td><td>专属实例</td><td>客户网络</td><td>—</td><td>网络默认关闭；不等于完全私有或客户自持全部密钥</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-08-enterprise-security__image-03.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-08-enterprise-security__image-03.jpg" alt="两类审计的盲区。控制面审计记录策略、成员、模型、账单；运行时审计记录任务、工具、命令、网络、产物、批准与证据。Qoder 当前覆盖了前者，后者仍有明显缺口。" loading="lazy"></a>
+  <figcaption>两类审计的盲区。控制面审计记录策略、成员、模型、账单；运行时审计记录任务、工具、命令、网络、产物、批准与证据。Qoder 当前覆盖了前者，后者仍有明显缺口。</figcaption>
+</figure>
+
+    <p>典型的翻车剧本：安全评审认为某个 Hook 会在提交前强制扫描，云端 Agent 却根本不支持这个 Hook；管理员以为本地 deny 规则会跟着任务走到云端，实际没有；用户以为 Cloud Agent 能看到本地修复，任务却基于旧提交继续修改。</p>
+
+    <div class="highlight"><strong>PoC 必须按「表面 × 模式 × 环境」建立控制矩阵，逐项验证，不接受「产品整体支持」的回答。</strong></div>
+  </div>
+
+  <div id="c6-identity" class="subsection">
+    <h3 data-section="SECTION 06.4">身份有了 SSO，还缺生命周期闭环</h3>
+    <p>Qoder Teams/Enterprise 支持 SAML/OIDC SSO，文档描述了首次登录的 JIT 自动创建。Enterprise 还有分组、角色、域名验证和策略。SSO 解决登录，不自动解决身份生命周期。</p>
+
+    <ul class="checklist">
+      <li>是否支持 <b>SCIM 或等效自动停用</b>？</li>
+      <li>离职用户的个人 <b>Memory、PAT、Cloud Agent 和未完成任务</b>如何收回？</li>
+      <li>服务账号和自动化 Agent <b>由谁持有，凭证多久轮换</b>？</li>
+      <li>分组变化是否<b>实时影响知识、插件和模型访问</b>？</li>
+      <li>JIT 创建是否会让<b>未分配席位的人意外进入组织</b>？</li>
+    </ul>
+
+    <div class="system-tip">目前没看到完整的 SCIM 生命周期说明。<b>不能据此断言它不支持</b>，只能说采购方需要向销售和安全团队索取当前能力、路线图与合同承诺。「能单点登录」和「人员离开后所有 Agent 权限被干净收回」，中间差着一整套治理。</div>
+  </div>
+
+  <div id="c6-audit" class="subsection">
+    <h3 data-section="SECTION 06.5">审计日志覆盖了控制面，没覆盖运行现场</h3>
+    <p>Qoder Enterprise 审计日志记录组织设置、成员、邀请、分组、认证、模型策略、用量、订阅和账单等管理操作。它能回答谁在什么时候改了什么管理配置。</p>
+
+    <p>文档也明确列出<b>不记录</b>的内容：用户提示词、模型响应、代码片段与 Diff、终端命令与输出、IDE/CLI/Agent 执行过程、MCP 工具调用参数、密钥明文。</p>
+
+    <p>不记录业务内容有隐私好处，但对运行时问责形成明显盲区。事故发生后，安全团队可能知道管理员昨天开启了某个模型，却不知道 Agent 今天执行了哪条命令、向哪个 MCP 发送了什么参数、哪个 Diff 引入了漏洞。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-08-enterprise-security__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-08-enterprise-security__image-04.jpg" alt="Agent 供应链风险。插件可以打包 Skills、Commands 和 MCP，Skill 又可包含脚本和参考文件。很多资产看起来只是 Markdown，容易让人放松警惕——实际上相当于给 Agent 装软件。" loading="lazy"></a>
+  <figcaption>Agent 供应链风险。插件可以打包 Skills、Commands 和 MCP，Skill 又可包含脚本和参考文件。很多资产看起来只是 Markdown，容易让人放松警惕——实际上相当于给 Agent 装软件。</figcaption>
+</figure>
+
+    <div class="chain">
+      <span>控制面审计<br>策略 / 成员 / 账单</span><i>+</i>
+      <span>运行时审计<br>任务 / 命令 / 产物</span><i>=</i>
+      <span>完整责任链</span>
+    </div>
+
+    <p>运行时日志不一定要保存敏感原文，可以做字段分级、哈希、脱敏、客户自管存储和短期保留。关键是<b>责任链不能完全消失</b>。在 Qoder 提供更完整能力前，企业应把 Git、CI、EDR、网络代理、MCP 网关和云审计日志拼进同一事件链。</p>
+
+    <h3>企业最终要买的六问系统</h3>
+    <div class="formula" aria-label="Agent 责任链六问" style="grid-template-columns:repeat(3,1fr);">
+      <div>谁发起</div><div>拿了什么</div><div>用了哪个模型</div>
+      <div>执行了什么</div><div>谁批准</div><div>如何恢复</div>
+    </div>
+    <p style="margin-top:14px;">少一个，责任链就断一截。</p>
+  </div>
+
+  <div id="c6-checklist" class="subsection">
+    <h3 data-section="SECTION 06.6">企业 PoC 与合同清单</h3>
+    <p>这一节可以直接复制到你的评估表里逐条打勾。</p>
+
+    <div class="chain">
+      <span>数据流<br>全量画清</span><i>›</i>
+      <span>表面 × 模式<br>控制矩阵</span><i>›</i>
+      <span>身份<br>生命周期</span><i>›</i>
+      <span>运行时<br>可追溯</span><i>›</i>
+      <span>供应链<br>可撤回</span><i>›</i>
+      <span>知识<br>可治理</span>
+    </div>
+
+    <ul class="checklist">
+      <li>画出源码、Embedding、Knowledge Card、RepoWiki、Memory、提示词、终端输出的<b>完整数据流</b>。</li>
+      <li>按 Desktop / Quest / CLI / Cloud / SDK / Qoder CN <b>分别验证</b>权限和沙箱。</li>
+      <li>强制测试 <b>Linux 无 bwrap、网络关闭、提权拒绝、凭证撤销</b>四个场景。</li>
+      <li>确认 Share &amp; Improve 的组织默认值、历史数据和合同优先级。</li>
+      <li>索取<b>模型与分包商清单</b>，明确地区、保留和变更通知。</li>
+      <li>验证离职、撤权、仓库删除后个人 Memory、PAT、Cloud Session 和衍生知识的清理。</li>
+      <li>将插件、Skills、Hooks、MCP 纳入<b>版本固定、签名、白名单与应急撤回</b>。</li>
+      <li>用真实事故演练检查运行时证据能否串起 Git、CI、EDR、网络和管理日志。</li>
+      <li>要求知识卡保留<b>来源、权限、分支、版本和责任人</b>。</li>
+      <li>核对 SOC 2 / ISO、DPA、渗透测试、漏洞响应与 SLA 的<b>实际覆盖范围</b>。</li>
+      <li>写清<b>数据导出、删除、迁移和合同终止后</b>的处理。</li>
+      <li>把 Credits 异常、失控循环和模型切换纳入<b>成本与安全告警</b>。</li>
+    </ul>
+
+    <div class="note-strip"><strong>关于公开认证材料：</strong>目前没有可公开核验的 SOC 2 报告、ISO 27001 证书、完整 Trust Center、DPA 模板或分包商清单。<b>这不等于 Qoder 没有相关认证或企业材料</b>，也不等于产品不安全——往往需要走销售流程和保密协议才能获取。正确做法不是凭空下结论，而是把它列为采购前置项。材料缺失本身不是判决，但意味着尽调不能只靠官网。</div>
+  </div>
+</section>
+
+<section id="chapter07" class="chapter-page">
+  <header class="chapter-opener" data-number="07">
+    <p class="chapter-kicker">CHAPTER 07 · IN PRACTICE</p>
+    <h2>实战：从单 Agent 到专家团</h2>
+    <p>一次完整的多 Agent 任务实录、QoderWork 六大办公场景、以及六个可clone 下来跑的 Qoder 开源项目。</p>
+  </header>
+
+  <div id="c7-experts" class="subsection">
+    <h3 data-section="SECTION 07.1">专家团模式：一次完整实录</h3>
+    <p class="lead">Qoder 在 Ask Mode 和 Agent Mode 之外加了第三种模式 Experts Mode（专家团）。用大白话说就是：你给一个需求，AI 自动组建一支专家团队帮你干活。</p>
+
+    <p>关键区分点在于：<b>这些「专家」不是同一个 AI 换了个名字在演戏。</b>每个 Expert 是经过专项调优化的 SWE Agent，而且不同专家会自动路由到最适合它的模型——规划任务用 Opus，写代码用 GLM5，浏览器测试用 Kimi K2.5。</p>
+
+    <h3>第一步：给一个模糊需求</h3>
+    <div class="prompt-box">
+      <div class="prompt-head"><span>原始需求 · 故意留模糊</span><span>用来测试它的澄清能力</span></div>
+      <div class="prompt-body">请帮我设计一个小学生英语单词听写交互式网页应用，家长可以创建单词的听写列表，学生通过单词拼写 + 实时反馈练习英语单词，提升记忆效果。</div>
+    </div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-15-expert-team__media_b22_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-15-expert-team__media_b22_p1.jpg" alt="面对模糊需求，专家团没有立刻动手，而是切换到计划模式并反问确认：数据存储方式倾向哪种、是否需要单词发音功能。这正是 Quest 交接协议里「冻结意图」的那一步。" loading="lazy"></a>
+  <figcaption>面对模糊需求，专家团没有立刻动手，而是切换到计划模式并反问确认：数据存储方式倾向哪种、是否需要单词发音功能。这正是 Quest 交接协议里「冻结意图」的那一步。</figcaption>
+</figure>
+
+    <h3>第二步：澄清 → 规划 → 分配</h3>
+    <p>它采用选择题方式确认需求，问是否需要后端、整体架构和语音功能方案。问题澄清后开始规划任务，给出详细实施方案供确认。确认之后才开始分配任务，多个角色并行启动。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-15-expert-team__media_b27_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-15-expert-team__media_b27_p1.jpg" alt="多个角色同步进入工作状态。前端工程师与后端工程师并行开发，每个专家都有自己的名字和独立的任务上下文，互不干扰。" loading="lazy"></a>
+  <figcaption>多个角色同步进入工作状态。前端工程师与后端工程师并行开发，每个专家都有自己的名字和独立的任务上下文，互不干扰。</figcaption>
+</figure>
+
+    <p>更关键的一步：<b>Leader Agent 会把前端功能继续拆分</b>，引入多个前端工程师分别开发家长管理功能和学生练习页面，同时保留一个后端工程师写 API，形成真正的并行分工。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-15-expert-team__media_b31_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-15-expert-team__media_b31_p1.jpg" alt="Leader Agent 按功能继续拆分前端任务，多个前端工程师并行推进。这是多 Agent 的核心价值——子任务真的独立，而不只是排队。" loading="lazy"></a>
+  <figcaption>Leader Agent 按功能继续拆分前端任务，多个前端工程师并行推进。这是多 Agent 的核心价值——子任务真的独立，而不只是排队。</figcaption>
+</figure>
+
+    <h3>第三步：整合、测试与评审</h3>
+    <p>各个前端功能完成后，Leader 引入一名前端工程师负责整合和整体联调。接着测试工程师和代码评审员同时加入，一个负责功能性测试，一个负责代码质量与安全评审。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-15-expert-team__media_b35_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-15-expert-team__media_b35_p1.jpg" alt="代码评审员发现前后端接口不一致后，Leader 紧急召唤后端工程师加入修复，测试工程师同步等待重新验证。评审发现问题 → 召唤修复 → 回归验证，这条链路是多 Agent 相对单 Agent 的真正增益。" loading="lazy"></a>
+  <figcaption>代码评审员发现前后端接口不一致后，Leader 紧急召唤后端工程师加入修复，测试工程师同步等待重新验证。评审发现问题 → 召唤修复 → 回归验证，这条链路是多 Agent 相对单 Agent 的真正增益。</figcaption>
+</figure>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-15-expert-team__media_b38_p1.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-15-expert-team__media_b38_p1.jpg" alt="测试工程师会自动打开浏览器逐步测试。独立浏览器验证比模型自己声称「测试通过」可靠得多——这是把绿色测试和真实结果分开的关键设计。" loading="lazy"></a>
+  <figcaption>测试工程师会自动打开浏览器逐步测试。独立浏览器验证比模型自己声称「测试通过」可靠得多——这是把绿色测试和真实结果分开的关键设计。</figcaption>
+</figure>
+
+    <h3>真实体感的变化</h3>
+    <div class="scenario-grid">
+      <div class="card">
+        <h3>用单 Agent 做复杂任务</h3>
+        <p>像带一个实习生 mentor：得一直盯着，时刻准备纠偏，稍微复杂就容易出岔子。大量时间花在「管理 AI」上。</p>
+        <span class="mini-label">你是执行者</span>
+      </div>
+      <div class="card">
+        <h3>用专家团模式</h3>
+        <p>你变成项目经理，工作是审计计划、验收结果，而不是手把手教 AI 写每一行代码。Contexts 更精简，Credits 消耗比预想的少。</p>
+        <span class="mini-label">你是决策者</span>
+      </div>
+    </div>
+
+    <div class="highlight"><strong>什么时候该用专家团：</strong>全栈开发一个完整功能、给现有项目做一次重构、多文件的功能改造加测试。<b>什么时候不要用：</b>只想让 AI 写一个函数、改一个 bug、问一个技术问题——用 Agent Mode 甚至 Ask Mode 就够了，没必要动用专家团队。</div>
+  </div>
+
+  <div id="c7-qoderwork" class="subsection">
+    <h3 data-section="SECTION 07.2">QoderWork：办公场景的六大实战</h3>
+    <p>QoderWork 是把同一套 Harness 搬到桌面办公任务的产物，定位「本地运行、自主规划、安全可控的 AI 工作搭子」。它最大的价值不是「更聪明的聊天」，而是<b>把处理过程沉淀为可复用的 Skill</b>。</p>
+
+    <div class="scenario-grid">
+      <div class="card">
+        <div class="icon">1</div>
+        <h3>文件管理：按内容重命名</h3>
+        <p>把按时间命名的截图 IMG_20240101_xxx.jpg 按图片内容重新命名。QoderWork 逐个调用视觉模型识别，几分钟内交付：<code>小红书爆款标题分析截图.jpg</code>。全程无需人工介入。</p>
+        <span class="mini-label">内容创作者 · 设计师</span>
+      </div>
+      <div class="card">
+        <div class="icon">2</div>
+        <h3>聚会安排：先澄清再动手</h3>
+        <p>它没有立刻动手，而是抛出澄清问题：聚会类型、场地要求、参与者年龄段、预算。收集完才调 PPT Skill 生成。第一轮「安排不够具体」，追加一句「给我具体可执行的计划」后产出含路线、店铺、预算明细、备选方案的完整行程。</p>
+        <span class="mini-label">澄清越准，产物越贴近需求</span>
+      </div>
+      <div class="card">
+        <div class="icon">3</div>
+        <h3>行程日历：可导入的 ICS</h3>
+        <p>武汉到香港四天一人游，产出直接可导入系统日历的 ICS 文件，时间粒度精确到小时，并补充八达通办理提醒、当季穿衣建议、迪士尼预约注意事项。</p>
+        <span class="mini-label">自由行 · 商务出差 · 亲子游</span>
+      </div>
+      <div class="card">
+        <div class="icon">4</div>
+        <h3>PPT 生成：四段式工作流</h3>
+        <p>任务监控面板清晰显示：疯狂查资料（Web 检索）→ 生成配图素材（AI 图片生成）→ 制作 PPT 框架（PPT Skill）→ 输出可编辑 PPTX。踩坑：偶尔有文字重叠需手动微调。</p>
+        <span class="mini-label">培训师 · 销售</span>
+      </div>
+      <div class="card">
+        <div class="icon">5</div>
+        <h3>论文解读：沉淀为 Skill</h3>
+        <p>真正的杀手锏是把这套解读流程做成 Skill。确认输出格式、配色、章节模板参数后生成专属 Skill，以后丢任何论文都自动调用，产出统一配色和结构的网页。</p>
+        <span class="mini-label">授人以渔：调好一次，永久复用</span>
+      </div>
+      <div class="card">
+        <div class="icon">6</div>
+        <h3>热点分析：给框架而非清单</h3>
+        <p>不是给「看起来全」的清单，而是给出 COSTAR、ICIO 等经过验证的高阶提示词框架，并点出企业级应用正在跨越 Gartner 幻灭低谷期。</p>
+        <span class="mini-label">产品经理 · 投资经理</span>
+      </div>
+    </div>
+
+    <h3>QoderWork vs OpenClaw</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>维度</th><th>QoderWork</th><th>OpenClaw</th></tr></thead>
+        <tbody>
+          <tr><td>配置难度</td><td>零配置，下载即用</td><td>需本地大模型、24 小时开机</td></tr>
+          <tr><td>国内可用</td><td>直接可用</td><td>部分模型需海外下载</td></tr>
+          <tr><td>数据安全</td><td>本地运行，跨设备同步需主动开启</td><td>本地运行，默认本地</td></tr>
+          <tr><td>成长性</td><td>Skills 沉淀</td><td>Skill / Memory</td></tr>
+          <tr><td>适合人群</td><td>普通用户、企业办公</td><td>极客、深度定制</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>简单说：<b>想零配置上手 → 选 QoderWork；想深度自定义、玩本地大模型 → 选 OpenClaw。</b></p>
+  </div>
+
+  <div id="c7-helloqoder" class="subsection">
+    <h3 data-section="SECTION 07.3">HelloQoder：六个可运行的样本</h3>
+    <p>评估一个 AI 编程 Agent 最直接的方式是看「它实际能交付什么」。HelloQoder 仓库收集了 6 个由 Qoder 编写的活跃开源项目，覆盖 Python/FastAPI、.NET 10、Vue 3、Streamlit、PostgreSQL、FFmpeg 等多种技术栈。</p>
+
+    <div class="folder-tree" aria-label="HelloQoder 仓库结构">
+      <span class="folder">HelloQoder/</span><br>
+      ├── <span class="folder">Glimmer/</span> <span class="comment"># 桌面与移动端 AI 自动化 Agent</span><br>
+      ├── <span class="folder">CartService/</span> <span class="comment"># 电商购物车微服务</span><br>
+      ├── <span class="folder">NovelTTSApp/</span> <span class="comment"># 小说转有声书 AI 应用</span><br>
+      ├── <span class="folder">EpubToSplitTxt/</span> <span class="comment"># Epub 电子书章节拆分工具</span><br>
+      ├── <span class="folder">MindMates/</span> <span class="comment"># 心理健康 AI 陪伴平台</span><br>
+      └── <span class="folder">BatchClip/</span> <span class="comment"># 批量视频剪辑工具</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>项目</th><th>技术栈</th><th>核心特性</th><th>适合看什么</th></tr></thead>
+        <tbody>
+          <tr><td>Glimmer</td><td>Vue 3 / Python 3.10+ / PyAutoGUI / GLM-4V</td><td>桌面自动化、移动端支持、视觉理解</td><td>跨平台 UI 自动化与视觉驱动</td></tr>
+          <tr><td>CartService</td><td>Python / FastAPI / PostgreSQL / SQLAlchemy 2.0</td><td>购物车 CRUD、多端合并</td><td>微服务架构与数据建模</td></tr>
+          <tr><td>NovelTTSApp</td><td>.NET 10 / C# 13 / GLM-TTS / NAudio</td><td>智能分段、语音合成、声音克隆</td><td>Clean Architecture 三层落地</td></tr>
+          <tr><td>EpubToSplitTxt</td><td>VersOne.Epub / 正则</td><td>章节识别与智能拆分</td><td>文本处理与边界处理</td></tr>
+          <tr><td>MindMates</td><td>AI 陪伴平台</td><td>心理对话场景</td><td>产品型应用的完整度</td></tr>
+          <tr><td>BatchClip</td><td>FFmpeg</td><td>批量视频处理</td><td>外部工具链编排</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-head"><span>本地跑起来</span><span>三分钟</span></div>
+      <div class="prompt-body">git clone https://github.com/ichichchch/HelloQoder
+cd HelloQoder/CartService
+pip install -r requirements.txt
+# 配置 PostgreSQL 连接（DATABASE_URL 环境变量）
+alembic upgrade head
+uvicorn app.main:app --reload
+
+# 桌面自动化项目（需要智谱 GLM-4V API Key）
+cd HelloQoder/Glimmer
+cd Glimmer-UI &amp;&amp; npm install &amp;&amp; npm run dev
+cd ../Glimmer-Web &amp;&amp; pip install -r requirements.txt &amp;&amp; python main.py</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);">仓库提供英语、中文、俄语、韩语、日语 5 种语言 README，每个项目独立 README 加可选的 Agent.md / Agent&amp;Chat.md。整体来看，AI 编程 Agent 的产出已经从 demo 级别进入可运行项目级别。</p>
+  </div>
+
+  <div id="c7-org" class="subsection">
+    <h3 data-section="SECTION 07.4">AI 把代码写快之后，团队为什么反而更忙了</h3>
+    <p>同一时期的几组研究给出了一个看似矛盾的结论：有一项受控实验中开发者快了55.8%，另一项让资深开发者在自己的成熟仓库里干活，结果慢了 19%；还有一组发现 AI 采用越深，吞吐和不稳定性同时上升。这些数字可以同时成立，因为任务和组织条件不同。</p>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-05-org-bottleneck__image-02.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-05-org-bottleneck__image-02.jpg" alt="影响 AI 收益的四个变量：任务边界是否清楚、仓库隐性知识有多少、错误结果的验证成本多高、使用者对领域和项目有多熟。Qoder 的产品路线几乎逐项对应这四个变量。" loading="lazy"></a>
+  <figcaption>影响 AI 收益的四个变量：任务边界是否清楚、仓库隐性知识有多少、错误结果的验证成本多高、使用者对领域和项目有多熟。Qoder 的产品路线几乎逐项对应这四个变量。</figcaption>
+</figure>
+
+    <h3>影响收益的四个变量</h3>
+    <div class="table-wrap">
+      <table class="guide-table">
+        <thead><tr><th>变量</th><th>Qoder 的对应设计</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>任务边界是否清楚</td><td>Spec / Spec-driven</td><td>先定义目标、约束、验收，再执行</td></tr>
+          <tr><td>仓库隐性知识有多少</td><td>Knowledge Engine</td><td>RepoWiki + Cards + Commit Graph</td></tr>
+          <tr><td>验证成本多高</td><td>Quest + Experts</td><td>执行、测试、Review 一体</td></tr>
+          <tr><td>使用者对项目多熟</td><td>Memory</td><td>复用个人经验，但也要防错误固化</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>第一个实验更接近「清楚知道做什么，只看实现速度」；第二个实验包含成熟代码库的隐性约束、上下文搜索、方案判断和对 AI 输出的检查。前者是短跑，后者是穿着装备走熟悉但复杂的山路。</p>
+
+    <div class="highlight"><strong>AI 是放大器，不是漂白剂。</strong>工程基础好的团队采用 AI 后吞吐可以提高；基础差的团队，坏习惯同样会被放大。过去烂流程至少受限于人手，现在 Agent 可以一夜产出几十个 Diff。代码量上涨而交付时间没变，说明瓶颈只是搬家。</div>
+
+    <figure class="product-shot">
+  <a href="assets/qoder-images/qoder-05-org-bottleneck__image-04.jpg" target="_blank" rel="noopener" aria-label="查看原图"><img src="assets/qoder-images/qoder-05-org-bottleneck__image-04.jpg" alt="管理重心从人数迁移到 WIP。一个工程师原来同时做两件事，现在可以开十个 Agent，于是管理层以为吞吐会扩大五倍——实际往往是十个任务同时卡在评审、环境或业务确认上。限制在制品，比让每个工位都忙更重要。" loading="lazy"></a>
+  <figcaption>管理重心从人数迁移到 WIP。一个工程师原来同时做两件事，现在可以开十个 Agent，于是管理层以为吞吐会扩大五倍——实际往往是十个任务同时卡在评审、环境或业务确认上。限制在制品，比让每个工位都忙更重要。</figcaption>
+</figure>
+
+    <h3>企业采用 Qoder，应该先改四张表</h3>
+    <div class="brief-grid">
+      <div class="brief-item"><b>任务分级表</b><span>哪些工作适合 Editor，哪些适合单 Agent，哪些才值得 Experts；哪些场景禁止自治。</span></div>
+      <div class="brief-item"><b>验收矩阵</b><span>每类任务需要哪些静态检查、单测、集成测试、人工评审和上线观测。</span></div>
+      <div class="brief-item"><b>知识责任表</b><span>Rules、Specs、Knowledge Cards 和 Skills 谁维护，多久复审，出错找谁。</span></div>
+      <div class="brief-item"><b>产能看板</b><span>从需求到生产的总周期、评审等待、返工、回滚、缺陷逃逸和 Agent 成本，而不是代码行数和调用次数。</span></div>
+    </div>
+
+    <p>然后只选三类试点：<b>高频、边界清楚、验证自动化程度高</b>。比如脚手架、测试补齐、依赖升级、内部 CRUD、文档同步。先把流程跑通，再进入核心交易和复杂遗留系统。实践中新系统上的效果通常明显，历史系统提升有限，正好符合这个顺序。</p>
+
+    <div class="note-strip"><strong>不要拿一张最漂亮的绿地案例，去推断所有棕地系统都能复制。</strong>AI 时代真正的效率单位，是「被验证的结果」：多少有业务价值、经过验证、可维护的变更，以多低的总成本进入了生产。</div>
+  </div>
+</section>
+
+<section id="chapter08" class="chapter-page">
+  <header class="chapter-opener" data-number="08">
+    <p class="chapter-kicker">CHAPTER 08 · OUTLOOK</p>
+    <h2>采用判断：它能接管多少责任</h2>
+    <p>三个合理终局、六个失败路径、四个比用户数更值得看的领先指标，以及一份可以今天就开始的行动清单。</p>
+  </header>
+
+  <div id="c8-endings" class="subsection">
+    <h3 data-section="SECTION 08.1">三种合理终局</h3>
+    <p class="lead">Qoder 已经从 AI IDE 扩到 Desktop、Quest、Experts、CLI、Cloud Agents、SDK、QoderWork 和 QoderWake。产品宽度很大，真正的投资问题却很窄：它能否从「提高个人产量」升级为「承接组织责任」？</p>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <h3 class="mode-name">A</h3>
+        <p><b>高价值工程工具。</b>知识引擎和 Quest 做得不错，拥有一批重度开发者和亚洲企业客户，但 SDK 与生态没有大规模起飞。</p>
+        <ul><li>估值逻辑接近优秀开发者 SaaS</li><li>个人订阅 + Teams + Enterprise + Credits 带来收入</li><li>风险：巨头不断复制功能</li></ul>
+      </div>
+      <div class="mode-card">
+        <h3 class="mode-name">B</h3>
+        <p><b>软件生产控制面。</b>成为组织定义 Agent 能做什么、用什么知识、在哪运行、花多少预算、怎样验收的默认系统。</p>
+        <ul><li>处在模型之上、代码托管之下</li><li>同时对席位、算力、知识与市场交易收费</li><li>切换成本上升到组织流程级别</li></ul>
+      </div>
+      <div class="mode-card" style="background:var(--green-900);">
+        <h3 class="mode-name" style="color:#fff;">C</h3>
+        <p style="color:#cfe3d8;"><b>云套件的一部分。</b>Qoder 作为品牌和技术栈，被更大的云与企业 Agent 套件吸收。</p>
+        <ul style="color:#cfe3d8;"><li>获得模型、云资源、销售与合规基础</li><li>代价是独立平台的边界变弱</li><li>第三方可能视其为一项云能力</li></ul>
+      </div>
+    </div>
+
+    <p>哪种发生，不看口号，看四个信号：跨区企业客户是否增加、功能发布是否趋同、知识资产是否可治理地迁移、责任说明是否越来越清楚。</p>
+
+    <h3>全球版与 Qoder CN：两套「AI 生产制度」</h3>
+    <p>全球 Qoder 由新加坡 Bright Zenith 提供服务，数据可能在美国、新加坡和日本处理；Qoder CN 则由 Alibaba Cloud 作为第一方产品运营，使用中国主流模型并部署在境内，还提供 VPC、专属版和独立账号体系。两边共享 Qoder 品牌和产品思想，却不是简单换域名：<b>模型池、账号、Credits、合同、数据路径、发布节奏和监管责任都可能不同。</b></p>
+
+    <div class="scenario-grid">
+      <div class="card"><h3>双控制面的优势</h3><p>能在两套市场制度里分别落地。中国和亚洲受监管行业能不能签合同、过数据边界、进入已有云账单，常常比模型排行榜更重要。</p></div>
+      <div class="card"><h3>双控制面的代价</h3><p>必须同时维护两套账号、两套评测、两套运维。同一功能的发布要分别完成安全、合规和模型验证。</p></div>
+    </div>
+
+    <div class="highlight"><strong>全球化真正的难题，是知识能否跨国流动。</strong>跨国公司可能希望全球团队共享架构规范与 Skills，又不允许中国用户数据、特定源码越境。这需要知识层支持区域标签、来源 ACL、导出控制、公共规范与项目事实分层、跨区同步前脱敏或审批。<strong>做不好，大客户只能把两套 Qoder 当成互不相干的工具，知识飞轮被地区边界切断。</strong></div>
+  </div>
+
+  <div id="c8-risks" class="subsection">
+    <h3 data-section="SECTION 08.2">六条最现实的失败路径</h3>
+    <div class="mistake-grid">
+      <div class="mistake"><b>01 模型吃掉 Harness 差异</b><p>通用模型原生具备更强搜索、记忆、工具和长任务能力，知识层与编排层被压缩成标准功能。</p></div>
+      <div class="mistake"><b>02 系统记录方截住价值</b><p>GitHub、云平台或 IDE 把 Agent 深度接进 Issue、PR、CI 与权限，Qoder 只能作为可替换执行器。</p></div>
+      <div class="mistake"><b>03 知识飞轮变成知识债</b><p>自动卡片过期、错误规范自我复制、权限继承不清，企业不敢让它长期沉淀。</p></div>
+      <div class="mistake"><b>04 验证成本吞掉生成收益</b><p>Agent 产量提高，评审与回归跟不上，客户付了 Credits 还要付更多人工返工。</p></div>
+      <div class="mistake"><b>05 平台表面扩张过快</b><p>Desktop、CLI、Cloud、SDK、Work、Wake、CN 与全球版能力不一致，研发资源被兼容和解释成本拖住。</p></div>
+      <div class="mistake"><b>06 公开生态起不来</b><p>Skills 和 MCP 兼容外部标准，却没有开发者和伙伴在 Qoder 上形成独有供给，Marketplace 只是分发目录。</p></div>
+    </div>
+    <div class="note-strip"><strong>这六条风险，没有一条靠更强的模型就能解决。</strong></div>
+  </div>
+
+  <div id="c8-metrics" class="subsection">
+    <h3 data-section="SECTION 08.3">四个比用户数更值得看的领先指标</h3>
+    <p>用户数和内部 Benchmark 只能说明增长与迭代，不能单独证明平台护城河。真正该盯的是下面四个。</p>
+
+    <div class="evidence-map" style="grid-template-columns:repeat(2,1fr);">
+      <div><b>知识复用率</b><span>不是生成了多少 RepoWiki，而是团队任务中有多少次正确调用了已有知识，并减少搜索、纠正和返工。更进一步要看被调用知识的纠错率和过期率——调用多、纠错也多，说明不是护城河，是污染源。</span></div>
+      <div><b>任务验收率</b><span>不是 Agent 说「完成」，而是结果经测试、Review 和生产观察后被接受，还要扣除人类澄清、修复和回滚时间。</span></div>
+      <div><b>组织渗透率</b><span>一个企业有多少团队把 Qoder 放进真实流程，而非只买席位。如果企业收入高却集中在试点或赠送 Credits，质量与可持续性完全不同。</span></div>
+      <div><b>第三方结果贡献率</b><span>SDK、Skills、MCP、Plugins 和合作伙伴产生了多少被验证结果，而不是下载多少次。平台必须有第三方在上面创造价值。</span></div>
+    </div>
+
+    <div class="highlight"><strong>最终判断：</strong>Qoder 已经拿到了争夺软件生产控制面的入场券，但能否坐上主桌，要看它能不能把组织责任，而不只是代码任务，稳定地接过去。<b>模型替人写代码，是能力问题；企业敢让系统长期记住、持续执行、花钱并承担后果，是制度问题。Qoder 的上限，就藏在这两个问题之间。</b></div>
+  </div>
+
+  <div id="c8-action" class="subsection">
+    <h3 data-section="SECTION 08.4">今天就能开始的行动清单</h3>
+    <div class="checklist">
+      <li><strong>给知识做一次体检。</strong>挑三条最核心的 Knowledge Card，检查是否记录了来源、责任人、置信度和验证方式。缺失的补上。</li>
+      <li><strong>把「以代码为准」写进默认指令。</strong>发现卡片与代码冲突时立即上报，而不是让 Agent 自行选择。</li>
+      <li><strong>按表面建控制矩阵。</strong>把你团队实际会用到的每个表面（IDE / CLI / Cloud / CN）列出来，逐项标注权限、沙箱、Hooks 支持情况。</li>
+      <li><strong>设一条 WIP 上限。</strong>不要同时开太多 Agent 任务。评审队列超过阈值时，最正确的动作可能是停止生成。</li>
+      <li><strong>把验收写成可执行的检查。</strong>每条约束都要能转成测试或 Hook，否则它只是意见。</li>
+      <li><strong>算一次真实总成本。</strong>不要只看席位价。把 Credits 消耗、人工返工时间和评审时间一起算进去。</li>
+      <li><strong>收集一次失败样本。</strong>记录 Agent 做错的地方，判断它是随机错误还是被某条错误知识稳定复现。</li>
+      <li><strong>选三类试点。</strong>高频、边界清楚、验证自动化程度高的任务先跑，不要一上来就动核心交易链路。</li>
+    </ul>
+
+    <h3>最后回到那个最初的判断</h3>
+    <p>Qoder 值得认真研究，不是因为它功能多，也不是因为用户数听起来很大。它抓住了 Agent 时代最难、也最容易被低估的两层：<b>工程知识和任务运行时</b>。它还拥有 Alibaba Cloud 的企业与中国市场通道，并敢于把模型层开放给 BYOK。这些都是真筹码。</p>
+    <p>同样真实的是，生态很早，云与本地运行时仍有差异，企业运行时审计存在空白，Knowledge Engine 的长期治理效果还需要时间验证。产品线扩张速度也会考验组织执行。</p>
+  </div>
+</section>
+
+
+        <footer class="chapter-end book-finish">
+          <p class="finish-kicker">YOUR WORK SYSTEM</p>
+          <h2>把判断变成你自己的工作系统</h2>
+          <p>工具会换，模型会轮换，界面会重做。真正沉淀下来的，是你团队的知识治理制度、验收矩阵、责任链设计和那套判断框架。</p>
+          <p>从一份 Spec 开始。先把边界和验收写清楚，交给 Agent 执行，用证据验收，把失败沉淀成下一次的约束。能重复得到可靠结果，才算真正掌握了 AI 编程 Agent。</p>
+          <div class="end-checks">
+            <div><b>01 · 知识</b>可追溯、可质疑、可废止</div>
+            <div><b>02 · 任务</b>有边界、有验收、有回滚</div>
+            <div><b>03 · 责任</b>每一步都有人能回答</div>
+          </div>
+        </footer>
+      </article>
+    </main>
+  </div>
+  <script>
+(() => {
+  const toc = document.querySelector('.toc');
+  const links = [...document.querySelectorAll('.toc a[href^="#"]')];
+  const currentReading = document.getElementById('current-reading');
+  const targets = links
+    .map(link => ({ link, target: document.querySelector(link.getAttribute('href')) }))
+    .filter(item => item.target);
+
+  let activeId = '';
+  let ticking = false;
+
+  function activate(item) {
+    if (!item || item.target.id === activeId) return;
+    activeId = item.target.id;
+    const chapter = item.link.dataset.chapter;
+    const chapterLink = document.querySelector(`.chapter-link[data-chapter="${chapter}"]`);
+
+    links.forEach(link => {
+      link.classList.remove('is-active');
+      link.removeAttribute('aria-current');
+    });
+    chapterLink?.classList.add('is-active');
+    item.link.classList.add('is-active');
+    item.link.setAttribute('aria-current', 'location');
+    currentReading.textContent = item.link.textContent.trim();
+
+    const linkBox = item.link.getBoundingClientRect();
+    const tocBox = toc.getBoundingClientRect();
+    if (linkBox.top < tocBox.top + 120 || linkBox.bottom > tocBox.bottom - 32) {
+      toc.scrollTop += linkBox.top - tocBox.top - 150;
+    }
+  }
+
+  function updatePosition() {
+    const readingLine = window.scrollY + Math.min(240, window.innerHeight * .28);
+    const positioned = targets
+      .map(item => ({ ...item, top: item.target.getBoundingClientRect().top + window.scrollY }))
+      .sort((a, b) => a.top - b.top);
+    let current = positioned[0];
+    for (const item of positioned) {
+      if (item.top <= readingLine) current = item;
+      else break;
+    }
+    activate(current);
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updatePosition);
+      ticking = true;
+    }
+  }, { passive: true });
+  window.addEventListener('resize', updatePosition);
+  updatePosition();
+})();
+
+  </script>
+</body>
+</html>

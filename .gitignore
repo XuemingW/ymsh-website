@@ -1,0 +1,20 @@
+# ===== 逸鸣山海官网 Git 忽略规则 =====
+# 正式发布源只有一个：dist/
+# 以下为备份/临时/无关元数据，不纳入 Git（避免仓库体积爆炸）
+
+# macOS
+.DS_Store
+
+# 版本快照与预览（已是本地备份，体量巨大）
+versions/
+previews/
+output/
+
+# OpenAI Sites 元数据，不是 CloudBase 配置
+.openai/
+
+# 编辑器/系统
+*.swp
+*~
+.idea/
+.vscode/
